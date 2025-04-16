@@ -1,4 +1,4 @@
-namespace _2025_3_31_assignment6
+namespace assignment7
 {
     partial class Form1
     {
