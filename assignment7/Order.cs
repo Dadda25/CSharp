@@ -7,7 +7,7 @@ namespace OrderApp
 {
     public class Order : IComparable<Order>
     {
-        private readonly List<OrderDetail> _details = new List<OrderDetail>();
+        private readonly List<OrderDetail> details = new List<OrderDetail>();
 
         public int Id { get; set; }
 
@@ -15,9 +15,12 @@ namespace OrderApp
 
         public DateTime CreateTime { get; set; }
 
-        public float TotalPrice => _details.Sum(d => d.TotalPrice);
+        public float TotalPrice
+        {
+            get => Details.Sum(d => d.TotalPrice);
+        }
 
-        public List<OrderDetail> Details => _details;
+        public List<OrderDetail> Details => details;
 
         public Order()
         {
@@ -33,16 +36,16 @@ namespace OrderApp
 
         public void AddDetails(OrderDetail orderDetail)
         {
-            if (_details.Contains(orderDetail))
+            if (Details.Contains(orderDetail))
             {
-                throw new ApplicationException($"The product ({orderDetail.Product.Name}) already exists in order {Id}");
+                throw new ApplicationException($"The goods ({orderDetail.Goods.Name}) already exists in order {Id}"); // 更改 Product 为 Goods
             }
-            _details.Add(orderDetail);
+            Details.Add(orderDetail);
         }
 
         public int CompareTo(Order other)
         {
-            return other == null ? 1 : Id - other.Id;
+            return (other == null) ? 1 : Id - other.Id;
         }
 
         public override bool Equals(object obj)
@@ -56,23 +59,16 @@ namespace OrderApp
             return Id.GetHashCode();
         }
 
-        public void RemoveDetails(int index)
+        public void RemoveDetails(int num)
         {
-            if (index >= 0 && index < _details.Count)
-            {
-                _details.RemoveAt(index);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), "Invalid index to remove details.");
-            }
+            Details.RemoveAt(num);
         }
 
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            result.Append($"OrderId: {Id}, Customer: ({Customer})");
-            _details.ForEach(detail => result.Append($"\n\t{detail}"));
+            result.Append($"orderId:{Id}, customer:({Customer})");
+            Details.ForEach(detail => result.Append("\n\t" + detail));
             return result.ToString();
         }
     }
