@@ -1,1 +1,3753 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>旅途智多星 - 让旅行更智能</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+	<!-- Tailwind 配置 -->
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						primary: '#165DFF',
+						secondary: '#FF7D00',
+						accent: '#00B42A',
+						neutral: {
+							100: '#F5F7FA',
+							200: '#E4E6EB',
+							300: '#C9CDD4',
+							400: '#86909C',
+							500: '#4E5969',
+							600: '#272E3B',
+							700: '#1D2129',
+							800: '#6B21A8',
+							900: '#581C87',
+						}
+					},
+					fontFamily: {
+						inter: ['Inter', 'system-ui', 'sans-serif'],
+					},
+					animation: {
+						'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+						'typing': 'typing 1.4s infinite ease-in-out',
+						'float': 'float 3s ease-in-out infinite',
+					},
+					keyframes: {
+						typing: {
+							'0%, 100%': { opacity: 0.2 },
+							'50%': { opacity: 1 },
+						},
+						float: {
+							'0%, 100%': { transform: 'translateY(0)' },
+							'50%': { transform: 'translateY(-5px)' },
+						}
+					}
+				},
+			}
+		}
+	</script>
+
+	<style>
+		.content-auto {
+			content-visibility: auto;
+		}
+
+		.text-shadow {
+			text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.card-hover {
+			transition: all 300ms;
+			will-change: transform, box-shadow;
+		}
+
+			.card-hover:hover {
+				box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+				transform: translateY(-1px);
+			}
+
+		.btn-primary {
+			background-color: #165DFF;
+			color: white;
+			font-weight: 500;
+			padding: 0.5rem 1.5rem;
+			border-radius: 0.75rem;
+			transition: all 300ms;
+			box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+		}
+
+			.btn-primary:hover {
+				background-color: rgba(22, 93, 255, 0.9);
+				box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+				transform: translateY(-0.25rem);
+			}
+
+		.btn-secondary {
+			background-color: white;
+			border: 1px solid #165DFF;
+			color: #165DFF;
+			font-weight: 500;
+			padding: 0.5rem 1.5rem;
+			border-radius: 0.75rem;
+			transition: all 300ms;
+		}
+
+			.btn-secondary:hover {
+				background-color: rgba(22, 93, 255, 0.05);
+			}
+
+		.scrollbar-hide::-webkit-scrollbar {
+			display: none;
+		}
+
+		.scrollbar-hide {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+	</style>
+	<style>
+		/* 自定义工具类转换为普通CSS */
+
+
+		.chat-bubble-user {
+			border-radius: 20px 20px 6px 20px;
+			background-image: linear-gradient(to bottom right, #7C3AED, #A855F7);
+			color: white;
+			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+			transform: scale(1);
+			transition: all 0.2s ease;
+		}
+
+			.chat-bubble-user:hover {
+				transform: scale(1.01);
+			}
+
+		.chat-bubble-bot {
+			border-radius: 20px 20px 20px 6px;
+			background-color: white;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+			transform: scale(1);
+			transition: all 0.2s ease;
+		}
+
+			.chat-bubble-bot:hover {
+				transform: scale(1.01);
+			}
+
+		.typing-dot {
+			display: inline-block;
+			width: 0.5rem;
+			height: 0.5rem;
+			border-radius: 9999px;
+			background-color: #94a3b8;
+			margin: 0 0.125rem;
+			animation: typing 1.4s infinite ease-in-out;
+		}
+
+			.typing-dot:nth-child(2) {
+				animation-delay: 0.2s;
+			}
+
+			.typing-dot:nth-child(3) {
+				animation-delay: 0.4s;
+			}
+
+		.glass-effect {
+			background-color: rgba(255, 255, 255, 0.9);
+			backdrop-filter: blur(8px);
+			border-top: 1px solid #e5e7eb;
+		}
+
+		.mic-pulse {
+			position: relative;
+		}
+
+			.mic-pulse::after {
+				content: '';
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				border-radius: 9999px;
+				background-color: rgba(124, 58, 237, 0.3);
+				animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+				opacity: 0.75;
+			}
+
+		.message-appear {
+			animation: fadeIn 0.3s ease-out;
+		}
+
+
+		.scrollbar-thin::-webkit-scrollbar {
+			width: 0.25rem;
+		}
+
+		.scrollbar-thin::-webkit-scrollbar-track {
+			background-color: #f3f4f6;
+			border-radius: 9999px;
+		}
+
+		.scrollbar-thin::-webkit-scrollbar-thumb {
+			background-color: #d1d5db;
+			border-radius: 9999px;
+		}
+
+			.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+				background-color: #9ca3af;
+			}
+
+		.gradient-border {
+			position: relative;
+		}
+
+			.gradient-border::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				border-radius: 0 1rem 1rem 0;
+				padding: 1px;
+				background-image: linear-gradient(to bottom right, #7C3AED, #A855F7);
+				z-index: -1;
+			}
+
+		.avatar-float {
+			animation: float 3s ease-in-out infinite;
+		}
+
+		/* 右侧滑入动画核心样式 */
+		.sidebar-hidden {
+			transform: translateX(100%);
+			opacity: 0;
+			pointer-events: none;
+			right: 0;
+			left: auto;
+		}
+
+		.sidebar-visible {
+			transform: translateX(0);
+			opacity: 1;
+			pointer-events: auto;
+			right: 0;
+			left: auto;
+		}
+	</style>
+
+	<style>
+		/* 固定定位关键修改 */
+		#chatSidebar {
+			position: fixed !important; /* 强制固定定位 */
+			top: 50% !important; /* 垂直居中 */
+			transform: translateY(-50%) !important; /* 垂直居中偏移 */
+			right: 1.5rem !important; /* 右侧边距 */
+			bottom: auto !important; /* 取消底部定位 */
+		}
+
+		/* 原有的动画样式优化 */
+		.sidebar-hidden {
+			transform: translateY(-50%) translateX(100%); /* 调整隐藏时的偏移 */
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.sidebar-visible {
+			transform: translateY(-50%) translateX(0); /* 调整显示时的偏移 */
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		/* 其他原有样式保持不变... */
+		.content-auto {
+			content-visibility: auto;
+		}
+
+		.chat-bubble-user {
+			border-radius: 20px 20px 6px 20px;
+			background-image: linear-gradient(to bottom right, #7C3AED, #A855F7);
+			color: white;
+			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+			transform: scale(1);
+			transition: all 0.2s ease;
+		}
+
+			.chat-bubble-user:hover {
+				transform: scale(1.01);
+			}
+
+		.chat-bubble-bot {
+			border-radius: 20px 20px 20px 6px;
+			background-color: white;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+			transform: scale(1);
+			transition: all 0.2s ease;
+		}
+
+			.chat-bubble-bot:hover {
+				transform: scale(1.01);
+			}
+
+		.typing-dot {
+			display: inline-block;
+			width: 0.5rem;
+			height: 0.5rem;
+			border-radius: 9999px;
+			background-color: #94a3b8;
+			margin: 0 0.125rem;
+			animation: typing 1.4s infinite ease-in-out;
+		}
+
+			.typing-dot:nth-child(2) {
+				animation-delay: 0.2s;
+			}
+
+			.typing-dot:nth-child(3) {
+				animation-delay: 0.4s;
+			}
+
+		.glass-effect {
+			background-color: rgba(255, 255, 255, 0.9);
+			backdrop-filter: blur(8px);
+			border-top: 1px solid #e5e7eb;
+		}
+
+		.mic-pulse::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			border-radius: 9999px;
+			background-color: rgba(124, 58, 237, 0.3);
+			animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+			opacity: 0.75;
+		}
+
+		.message-appear {
+			animation: fadeIn 0.3s ease-out;
+		}
+
+		.scrollbar-thin::-webkit-scrollbar {
+			width: 0.25rem;
+		}
+
+		.scrollbar-thin::-webkit-scrollbar-track {
+			background-color: #f3f4f6;
+			border-radius: 9999px;
+		}
+
+		.scrollbar-thin::-webkit-scrollbar-thumb {
+			background-color: #d1d5db;
+			border-radius: 9999px;
+		}
+
+			.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+				background-color: #9ca3af;
+			}
+
+		.gradient-border::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			border-radius: 0 1rem 1rem 0;
+			padding: 1px;
+			background-image: linear-gradient(to bottom right, #7C3AED, #A855F7);
+			z-index: -1;
+		}
+
+		.avatar-float {
+			animation: float 3s ease-in-out infinite;
+		}
+	</style>
+	<style>
+		/* 自定义工具类 */
+		.content-auto {
+			content-visibility: auto;
+		}
+
+		.chat-bubble-user {
+			background-color: #3B82F6;
+			color: white;
+			border-radius: 0.75rem;
+			border-top-left-radius: 0;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		}
+
+		.chat-bubble-bot {
+			background-color: white;
+			color: #1F2937;
+			border-radius: 0.75rem;
+			border-top-right-radius: 0;
+			box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+		}
+
+		.typing-indicator {
+			display: flex;
+			gap: 0.25rem;
+		}
+
+		.typing-dot {
+			width: 0.5rem;
+			height: 0.5rem;
+			border-radius: 9999px;
+			background-color: #3B82F6;
+			animation: typing 1.4s infinite ease-in-out;
+		}
+
+			.typing-dot:nth-child(2) {
+				animation-delay: 0.2s;
+			}
+
+			.typing-dot:nth-child(3) {
+				animation-delay: 0.4s;
+			}
+
+		.btn-hover {
+			transition-property: all;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			transition-duration: 300ms;
+		}
+
+			.btn-hover:hover {
+				box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+				transform: translateY(-0.25rem);
+			}
+
+		.gradient-text {
+			background-clip: text;
+			-webkit-background-clip: text;
+			color: transparent;
+			background-image: linear-gradient(to right, #3B82F6, #6366F1);
+		}
+
+		.glass-effect {
+			background-color: rgba(255, 255, 255, 0.8);
+			backdrop-filter: blur(12px);
+		}
+
+		.card-hover {
+			transition-property: all;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			transition-duration: 300ms;
+		}
+
+
+		.chat-bubble {
+			max-width: 85%;
+			padding: 1rem;
+			animation: fadeIn 0.3s ease-in-out;
+		}
+
+		.chat-avatar {
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: 9999px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+		}
+
+		.chat-time {
+			font-size: 0.75rem;
+			color: #9CA3AF;
+			margin-top: 0.25rem;
+			display: block;
+		}
+
+		.chat-header {
+			background-image: linear-gradient(to right, #3B82F6, #6366F1);
+			color: white;
+			padding: 1rem;
+			border-top-left-radius: 0.75rem;
+			border-top-right-radius: 0.75rem;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+		}
+
+		.chat-messages {
+			padding: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			overflow-y: auto;
+			background-color: #F9FAFB;
+			border-bottom-right-radius: 0.75rem;
+			border-bottom-left-radius: 0.75rem;
+			height: 24rem;
+			max-height: 60vh;
+		}
+
+		.chat-input-area {
+			padding: 1rem;
+			display: flex;
+			align-items: center;
+			border-top-width: 1px;
+			border-top-color: #E5E7EB;
+			background-color: white;
+			border-bottom-right-radius: 0.75rem;
+			border-bottom-left-radius: 0.75rem;
+		}
+
+		.chat-input {
+			flex-grow: 1;
+			border-width: 1px;
+			border-color: #E5E7EB;
+			border-radius: 0.5rem;
+			padding-left: 1rem;
+			padding-right: 1rem;
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+			outline: 2px solid transparent;
+			outline-offset: 2px;
+			transition-property: all;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			transition-duration: 150ms;
+		}
+
+			.chat-input:focus {
+				outline-color: rgba(59, 130, 246, 0.3);
+				border-color: #3B82F6;
+			}
+
+		.chat-send-btn {
+			background-color: #3B82F6;
+			color: white;
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: 9999px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-left: 0.5rem;
+			transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+			transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+			transition-duration: 150ms;
+		}
+
+			.chat-send-btn:hover {
+				background-color: rgba(59, 130, 246, 0.9);
+			}
+
+		.chat-widget-fullscreen {
+			position: fixed;
+			top: 10%;
+			left: 10%;
+			width: 80%;
+			height: 80%;
+			z-index: 50;
+			border-radius: 0 !important;
+		}
+
+			.chat-widget-fullscreen .chat-messages {
+				height: calc(100% - 10rem);
+			}
+	</style>
+	<style>
+		.content-auto {
+			content-visibility: auto;
+		}
+
+		.text-shadow {
+			text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.card-hover {
+			transition: all 300ms;
+			will-change: transform, box-shadow;
+		}
+
+			.card-hover:hover {
+				box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+				transform: translateY(-1px);
+			}
+
+		.btn-primary {
+			background-color: #165DFF;
+			color: white;
+			font-weight: 500;
+			padding: 0.5rem 1.5rem;
+			border-radius: 0.75rem;
+			transition: all 300ms;
+			box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+		}
+
+			.btn-primary:hover {
+				background-color: rgba(22, 93, 255, 0.9);
+				box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+				transform: translateY(-0.25rem);
+			}
+
+		.btn-secondary {
+			background-color: white;
+			border: 1px solid #165DFF;
+			color: #165DFF;
+			font-weight: 500;
+			padding: 0.5rem 1.5rem;
+			border-radius: 0.75rem;
+			transition: all 300ms;
+		}
+
+			.btn-secondary:hover {
+				background-color: rgba(22, 93, 255, 0.05);
+			}
+
+		.scrollbar-hide::-webkit-scrollbar {
+			display: none;
+		}
+
+		.scrollbar-hide {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+
+		.spinner {
+			border-right-color: transparent; /* 调整旋转颜色 */
+		}
+
+		.loading-text {
+			transition: opacity 0.3s;
+		}
+	</style>
+</head>
+
+<body class="font-inter bg-neutral-100 text-neutral-700 min-h-screen flex flex-col">
+	<!-- 导航栏 -->
+	<header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300">
+		<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="flex items-center justify-between h-16 md:h-20">
+				<!-- Logo -->
+				<a href="#" class="flex items-center space-x-2">
+					<div class="bg-primary text-white p-2 rounded-lg">
+						<i class="fa fa-paper-plane text-xl"></i>
+					</div>
+					<span class="text-xl font-bold text-neutral-700">旅途智多星</span>
+				</a>
+
+				<!-- 桌面导航 -->
+				<nav class="hidden md:flex items-center space-x-8">
+					<a href="#destinations" class="text-neutral-600 hover:text-primary transition-colors">目的地</a>
+					<a href="#itinerary1" class="text-neutral-600 hover:text-primary transition-colors">行程规划</a>
+					<a href="#travel-planner" class="text-neutral-600 hover:text-primary transition-colors">AI助手</a>
+					<a href="#travel-note" class="text-neutral-600 hover:text-primary transition-colors">游记专区</a>
+					<a href="#reviews" class="text-neutral-600 hover:text-primary transition-colors">用户评价</a>
+					
+				</nav>
+
+				<!-- 用户操作 -->
+				<div class="flex items-center space-x-4">
+					<button class="hidden md:block btn-secondary">登录</button>
+					<button class="btn-primary">注册</button>
+					<button class="md:hidden text-neutral-700" id="mobile-menu-button">
+						<i class="fa fa-bars text-xl"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- 移动端导航菜单 -->
+		<div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg rounded-b-lg mx-4 overflow-hidden transition-all duration-300">
+			<div class="px-4 py-3 space-y-3">
+				<a href="#destinations" class="block py-2 text-neutral-600 hover:text-primary transition-colors">目的地</a>
+				<a href="#itinerary" class="block py-2 text-neutral-600 hover:text-primary transition-colors">行程规划</a>
+				<a href="#recommendations" class="block py-2 text-neutral-600 hover:text-primary transition-colors">智能推荐</a>
+				<a href="#reviews" class="block py-2 text-neutral-600 hover:text-primary transition-colors">用户评价</a>
+				<a href="#ai-assistant" class="block py-2 text-neutral-600 hover:text-primary transition-colors">AI助手</a>
+				<a href="#" class="block py-2 text-neutral-600 hover:text-primary transition-colors">登录</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="flex-grow pt-16 md:pt-20">
+		<!-- 英雄区域 -->
+		<section class="relative h-[100vh] min-h-[600px] bg-cover bg-center" style="background-image: url('https://picsum.photos/id/1036/1920/1080');">
+			<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+			<div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent"></div>
+
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative h-full flex flex-col justify-center">
+				<div class="max-w-3xl animate-fade-in">
+					<h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-white leading-tight text-shadow mb-6">
+						探索世界的<br><span class="gradient-text">智能旅伴</span>
+					</h1>
+					<p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 mb-8 max-w-2xl animate-slide-up" style="animation-delay: 0.2s">
+						让AI为您定制专属旅行计划，从行程安排到景点推荐，从美食攻略到预算规划，一站式解决您的所有旅行问题
+					</p>
+
+					<!-- AI 搜索框 -->
+					<div class="glass-effect rounded-xl shadow-2xl p-4 md:p-6 max-w-3xl animate-slide-up" style="animation-delay: 0.4s">
+						<div class="flex flex-col md:flex-row gap-4">
+							<div class="flex-grow">
+								<label class="block text-sm font-medium text-neutral-700 mb-1">告诉我您的旅行想法</label>
+								<div class="relative">
+									<input type="text"
+										   id="ai-search1"
+										   placeholder="例如：5天云南亲子游，预算8000元"
+										   class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+								</div>
+							</div>
+							<div class="flex items-end">
+								<button class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-lg font-medium btn-hover w-full md:w-auto" id="hero-search-btn1" >
+									<i class="fa fa-search mr-2"></i> 智能规划
+								</button>
+							</div>
+						</div>
+
+						<!-- AI 推荐标签 -->
+						<div class="mt-4 flex flex-wrap gap-2">
+							<span class="text-sm text-neutral-500">热门搜索:</span>
+							<button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+								成都美食之旅
+							</button>
+							<button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+								三亚亲子游
+							</button>
+							<button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+								新疆自驾游
+							</button>
+							<button class="text-sm text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+								日本赏樱攻略
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+		<!-- 目的地推荐 -->
+		<section id="destinations" class="py-16 md:py-24 bg-neutral-100">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center mb-12">
+					<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">AI精选目的地</h2>
+					<p class="text-neutral-500 max-w-2xl mx-auto">根据季节、热门程度和您可能喜欢的风格，为您推荐最适合的旅行目的地</p>
+				</div>
+
+				<!-- 目的地过滤器 -->
+				<div class="flex flex-wrap justify-center gap-3 mb-10">
+					<button class="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium" data-category="">全部</button>
+					<button class="bg-white text-neutral-600 hover:bg-neutral-100 px-5 py-2 rounded-full text-sm font-medium transition-colors" data-category="自然风光">自然风光</button>
+					<button class="bg-white text-neutral-600 hover:bg-neutral-100 px-5 py-2 rounded-full text-sm font-medium transition-colors" data-category="历史文化">历史文化</button>
+					<button class="bg-white text-neutral-600 hover:bg-neutral-100 px-5 py-2 rounded-full text-sm font-medium transition-colors" data-category="都市观光">都市观光</button>
+					<button class="bg-white text-neutral-600 hover:bg-neutral-100 px-5 py-2 rounded-full text-sm font-medium transition-colors" data-category="美食体验">美食体验</button>
+					<button class="bg-white text-neutral-600 hover:bg-neutral-100 px-5 py-2 rounded-full text-sm font-medium transition-colors" data-category="亲子游玩">亲子游玩</button>
+				</div>
+
+				<!-- 目的地卡片 -->
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="destination-cards">
+					<!-- 卡片将通过 JavaScript 动态添加 -->
+				</div>
+
+				<!-- 查看更多按钮 -->
+				<div class="text-center mt-10">
+					<button class="btn-secondary" id="load-more">
+						查看更多目的地 <i class="fa fa-long-arrow-right ml-2"></i>
+					</button>
+				</div>
+			</div>
+		</section>
+
+
+		<script>
+			let currentPage = 1;
+			let currentCategory = '';
+
+			async function loadDestinations(page, category) {
+				const response = await fetch(`/api/destinations?category=${category}&page=${page}`);
+				const destinations = await response.json();
+
+				const destinationCards = document.getElementById('destination-cards');
+				if (page === 1) {
+					destinationCards.innerHTML = '';
+				}
+
+				// 添加空数据检查
+				if (!destinations || destinations.length === 0) {
+					destinationCards.innerHTML = `
+													<div class="col-span-full text-center py-12">
+														<div class="text-neutral-400 mb-4">
+															<i class="fa fa-search text-5xl"></i>
+														</div>
+														<h3 class="text-lg font-medium text-neutral-600 mb-2">没有找到匹配的目的地</h3>
+														<p class="text-neutral-500">请尝试使用不同的关键词或类别进行搜索</p>
+													</div>
+												`;
+					return;
+				}
+
+				destinations.forEach(destination => {
+					// 添加字段检查，避免undefined
+					if (!destination.imageUrl || !destination.name) return;
+
+					const card = `
+													<div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+														<div class="relative h-48 overflow-hidden">
+															<img src="${destination.imageUrl}" alt="${destination.name}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+															<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-primary">
+																<i class="fa fa-${getIcon(destination.tag)} mr-1"></i> ${destination.tag}
+															</div>
+														</div>
+														<div class="p-5">
+															<div class="flex justify-between items-start mb-3">
+																<h3 class="font-semibold text-lg text-neutral-700">${destination.name}</h3>
+																<div class="flex items-center">
+																	<i class="fa fa-star text-yellow-400"></i>
+																	<span class="ml-1 text-sm font-medium">${destination.rating}</span>
+																</div>
+															</div>
+															<p class="text-neutral-500 text-sm mb-4 line-clamp-2">
+																${destination.description}
+															</p>
+															<div class="flex justify-between items-center">
+																<span class="text-primary font-semibold">¥${destination.price}<span class="text-xs text-neutral-500">起/人</span></span>
+																<button class="text-primary hover:text-primary/80 transition-colors">
+																	<i class="fa fa-arrow-right"></i> 查看详情
+																</button>
+															</div>
+														</div>
+													</div>
+												`;
+					destinationCards.innerHTML += card;
+				});
+			}
+
+			function getIcon(tag) {
+				switch (tag) {
+					case '热门':
+						return 'heart';
+					case '摄影胜地':
+						return 'camera';
+					case '亲子友好':
+						return 'child';
+					case '历史文化':
+						return 'history';
+					default:
+						return 'tag';
+				}
+			}
+
+			// 初始化加载
+			loadDestinations(currentPage, currentCategory);
+
+			// 过滤器点击事件
+			const filterButtons = document.querySelectorAll('#destinations button[data-category]');
+			filterButtons.forEach(button => {
+				button.addEventListener('click', () => {
+					// 更新按钮样式
+					filterButtons.forEach(btn => {
+						btn.classList.remove('bg-primary', 'text-white');
+						btn.classList.add('bg-white', 'text-neutral-600', 'hover:bg-neutral-100');
+					});
+					button.classList.remove('bg-white', 'text-neutral-600', 'hover:bg-neutral-100');
+					button.classList.add('bg-primary', 'text-white');
+
+					currentCategory = button.dataset.category;
+					currentPage = 1;
+					loadDestinations(currentPage, currentCategory);
+				});
+			});
+
+			// 查看更多按钮点击事件
+			const loadMoreButton = document.getElementById('load-more');
+			loadMoreButton.addEventListener('click', () => {
+				currentPage++;
+				loadDestinations(currentPage, currentCategory);
+			});
+		</script>
+
+		<!-- AI 行程规划 -->
+		<section id="itinerary1" class="py-16 md:py-24 bg-white relative overflow-hidden">
+			<div class="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -skew-x-12 transform origin-top-right z-0"></div>
+
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+				<div class="flex flex-col lg:flex-row items-center gap-12">
+					<div class="lg:w-1/2">
+						<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">AI智能行程规划</h2>
+						<p class="text-neutral-500 mb-8">
+							输入您的旅行偏好，AI将为您量身定制最佳行程方案，包括景点选择、交通安排、餐饮推荐等，让您的旅行轻松无忧。
+						</p>
+
+						<!-- 功能特点 -->
+						<div class="space-y-6">
+							<div class="flex items-start gap-4">
+								<div class="bg-primary/10 p-3 rounded-lg text-primary">
+									<i class="fa fa-clock-o text-xl"></i>
+								</div>
+								<div>
+									<h3 class="font-semibold text-lg text-neutral-700 mb-1">时间优化</h3>
+									<p class="text-neutral-500">智能规划路线，减少路途时间浪费，最大化您的旅行体验。</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-4">
+								<div class="bg-primary/10 p-3 rounded-lg text-primary">
+									<i class="fa fa-money text-xl"></i>
+								</div>
+								<div>
+									<h3 class="font-semibold text-lg text-neutral-700 mb-1">预算控制</h3>
+									<p class="text-neutral-500">根据您的预算自动调整行程安排，确保每一分钱都花在刀刃上。</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-4">
+								<div class="bg-primary/10 p-3 rounded-lg text-primary">
+									<i class="fa fa-exchange text-xl"></i>
+								</div>
+								<div>
+									<h3 class="font-semibold text-lg text-neutral-700 mb-1">灵活调整</h3>
+									<p class="text-neutral-500">随时根据您的喜好调整行程，AI会实时为您重新优化方案。</p>
+								</div>
+							</div>
+
+							<div class="flex items-start gap-4">
+								<div class="bg-primary/10 p-3 rounded-lg text-primary">
+									<i class="fa fa-bolt text-xl"></i>
+								</div>
+								<div>
+									<h3 class="font-semibold text-lg text-neutral-700 mb-1">实时更新</h3>
+									<p class="text-neutral-500">实时监控天气、交通和景点状况，自动调整行程以避免不必要的麻烦。</p>
+								</div>
+							</div>
+						</div>
+
+						<button class="btn-primary mt-8" onclick="recommend_ai()">
+							开始规划我的行程 <i class="fa fa-rocket ml-2"></i>
+						</button>
+					</div>
+
+					<!-- AI 行程规划演示 -->
+					<div class="lg:w-1/2  bg-white rounded-2xl shadow-xl overflow-hidden">
+						<div class="bg-primary p-4 text-white">
+							<h3 class="font-semibold text-lg">5天云南丽江行程规划</h3>
+							<p class="text-white/80 text-sm">由AI根据您的偏好生成</p>
+						</div>
+
+						<!-- 行程时间线 -->
+						<div class="p-6 max-h-[500px] overflow-y-auto scrollbar-hide">
+							<!-- 第一天 -->
+							<div class="mb-8">
+								<div class="flex items-center mb-4">
+									<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">1</div>
+									<h4 class="ml-3 font-semibold text-neutral-700">第一天：抵达丽江</h4>
+								</div>
+
+								<div class="ml-4 pl-4 border-l-2 border-primary/20 space-y-6">
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">丽江古城漫步</h5>
+											<span class="text-xs text-neutral-500">09:00 - 12:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">游览丽江古城，感受纳西族风情，欣赏四方街、木府等景点。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 丽江古城</span>
+											<span class="flex items-center"><i class="fa fa-clock-o mr-1 text-primary"></i> 约3小时</span>
+										</div>
+									</div>
+
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">纳西美食体验</h5>
+											<span class="text-xs text-neutral-500">12:30 - 14:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">品尝纳西族特色美食，如纳西烤肉、丽江粑粑、鸡豆凉粉等。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-cutlery mr-1 text-primary"></i> 阿妈意纳西饮食院</span>
+											<span class="flex items-center"><i class="fa fa-rmb mr-1 text-primary"></i> 人均¥68</span>
+										</div>
+									</div>
+
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">黑龙潭公园</h5>
+											<span class="text-xs text-neutral-500">15:00 - 17:30</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">游览黑龙潭公园，欣赏雪山倒影，了解纳西族东巴文化。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 黑龙潭公园</span>
+											<span class="flex items-center"><i class="fa fa-ticket mr-1 text-primary"></i> 门票¥50</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- 第二天 -->
+							<div class="mb-8">
+								<div class="flex items-center mb-4">
+									<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">2</div>
+									<h4 class="ml-3 font-semibold text-neutral-700">第二天：玉龙雪山一日游</h4>
+								</div>
+
+								<div class="ml-4 pl-4 border-l-2 border-primary/20 space-y-6">
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">玉龙雪山冰川公园</h5>
+											<span class="text-xs text-neutral-500">08:00 - 12:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">乘坐大索道登上玉龙雪山，欣赏壮丽的冰川和雪山美景。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 玉龙雪山</span>
+											<span class="flex items-center"><i class="fa fa-ticket mr-1 text-primary"></i> 套票¥230</span>
+										</div>
+									</div>
+
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">蓝月谷</h5>
+											<span class="text-xs text-neutral-500">13:00 - 16:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">游览蓝月谷，欣赏湖水清澈见底，呈现出迷人的蓝色。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 蓝月谷</span>
+											<span class="flex items-center"><i class="fa fa-bus mr-1 text-primary"></i> 景区环保车¥20</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- 第三天 -->
+							<div class="mb-8">
+								<div class="flex items-center mb-4">
+									<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">3</div>
+									<h4 class="ml-3 font-semibold text-neutral-700">第三天：拉市海与茶马古道</h4>
+								</div>
+
+								<div class="ml-4 pl-4 border-l-2 border-primary/20 space-y-6">
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">拉市海湿地公园</h5>
+											<span class="text-xs text-neutral-500">09:30 - 12:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">欣赏拉市海的湖光山色，观鸟，体验纳西族村落生活。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 拉市海</span>
+											<span class="flex items-center"><i class="fa fa-ticket mr-1 text-primary"></i> 门票¥30</span>
+										</div>
+									</div>
+
+									<!-- 行程项 -->
+									<div class="bg-neutral-50 p-4 rounded-lg card-hover">
+										<div class="flex justify-between items-start mb-2">
+											<h5 class="font-medium text-neutral-700">茶马古道骑马体验</h5>
+											<span class="text-xs text-neutral-500">13:00 - 16:00</span>
+										</div>
+										<p class="text-neutral-500 text-sm mb-3">沿着古老的茶马古道骑马，穿越森林和田园，感受马帮文化。</p>
+										<div class="flex items-center text-sm text-neutral-500">
+											<span class="flex items-center mr-4"><i class="fa fa-map-marker mr-1 text-primary"></i> 茶马古道</span>
+											<span class="flex items-center"><i class="fa fa-clock-o mr-1 text-primary"></i> 约2小时</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- 查看更多行程按钮 -->
+							<div class="text-center mt-6">
+								<button class="text-primary hover:text-primary/80 transition-colors font-medium">
+									查看完整行程 <i class="fa fa-angle-down ml-1"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</section>
+
+
+		<section id="itinerary2" class="max-w-10x mx-auto bg-white rounded-xl shadow-lg overflow-hidden" style="display:none">
+			<div class="grid md:grid-cols-2 gap-8">
+				<!-- 左侧表单 -->
+				<div class="p-8">
+					<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">AI智能行程规划</h2>
+					<p class="text-neutral-500 mb-8">
+						告诉我们你的旅行偏好，AI将为你生成个性化的行程方案，包含景点推荐、时间安排和预算参考。
+					</p>
+
+					<form id="itineraryForm" class="space-y-6">
+						<div>
+							<label class="block text-sm font-medium text-neutral-700 mb-1">目的地</label>
+							<div class="relative">
+								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+									<i class="fa fa-map-marker text-neutral-400"></i>
+								</div>
+								<input type="text" id="destination" name="destination"
+									   class="pl-10 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-all"
+									   placeholder="输入你想去的地方" required>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<div>
+								<label class="block text-sm font-medium text-neutral-700 mb-1">旅行天数</label>
+								<div class="relative">
+									<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<i class="fa fa-calendar text-neutral-400"></i>
+									</div>
+									<input type="number" id="days" name="days" min="1" max="30"
+										   class="pl-10 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-all"
+										   placeholder="行程天数" value="5" required>
+								</div>
+							</div>
+
+							<div>
+								<label class="block text-sm font-medium text-neutral-700 mb-1">预算（元）</label>
+								<div class="relative">
+									<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<i class="fa fa-money text-neutral-400"></i>
+									</div>
+									<input type="number" id="budget" name="budget" min="1000" max="100000"
+										   class="pl-10 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-all"
+										   placeholder="总预算" value="5000" required>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<label class="block text-sm font-medium text-neutral-700 mb-1">旅行风格</label>
+							<div class="relative">
+								<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+									<i class="fa fa-suitcase text-neutral-400"></i>
+								</div>
+								<select id="travelStyle" name="travelStyle"
+										class="pl-10 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring focus:ring-primary/20 transition-all"
+										required>
+									<option value="休闲度假">休闲度假</option>
+									<option value="文化探索">文化探索</option>
+									<option value="户外探险">户外探险</option>
+									<option value="美食之旅">美食之旅</option>
+								</select>
+							</div>
+						</div>
+
+						<button type="submit" id="generateBtn"
+								class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-md transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20">
+							<i class="fa fa-magic mr-2"></i> 生成我的行程
+						</button>
+					</form>
+				</div>
+
+				<!-- 右侧结果 -->
+				<div class="bg-neutral-50 p-8 border-t md:border-t-0 md:border-l border-neutral-200">
+					<div id="loadingState" class="hidden flex flex-col items-center justify-center h-full">
+						<div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
+						<h3 class="text-lg font-medium text-neutral-700">AI正在思考...</h3>
+						<p class="text-neutral-500 text-sm mt-2">根据你的偏好生成最佳行程方案</p>
+					</div>
+
+					<div id="resultContainer" class="hidden">
+						<div class="mb-6">
+							<h3 id="destinationHeader" class="text-xl font-bold text-neutral-700"></h3>
+							<p id="tripInfo" class="text-neutral-500 text-sm"></p>
+						</div>
+
+						<div id="daysList" class="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+							<!-- 行程内容将动态插入这里 -->
+						</div>
+					</div>
+
+					<div id="emptyState" class="flex flex-col items-center justify-center h-full">
+						<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+							<i class="fa fa-map-o text-primary text-2xl"></i>
+						</div>
+						<h3 class="text-lg font-medium text-neutral-700">还没有行程</h3>
+						<p class="text-neutral-500 text-center mt-2 max-w-md">
+							填写左侧表单，点击"生成我的行程"按钮，AI将为你规划完美旅程
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+
+		<!-- 智能推荐 -->
+		<section id="travel-planner" class="py-16 md:py-24 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
+			<div class="absolute top-0 right-0 w-1/3 h-full opacity-10">
+				<i class="fa fa-map text-[300px] text-primary"></i>
+			</div>
+
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+				<div class="max-w-3xl mx-auto text-center mb-12">
+					<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">AI旅行规划助手</h2>
+					<p class="text-neutral-500">
+						让AI为您定制专属旅行计划，从行程安排到景点推荐，从美食攻略到预算规划，一站式解决您的所有旅行问题
+					</p>
+				</div>
+
+				<!-- AI聊天界面 -->
+				<div class="max-w-2xl mx-auto">
+					<div class="chat-widget rounded-xl shadow-xl overflow-hidden card-hover transition-all duration-300" id="travel-chat-widget">
+						<div class="chat-header">
+							<div class="chat-header-title flex items-center">
+								<div class="chat-header-icon bg-white/20 w-10 h-10 rounded-full flex items-center justify-center mr-3">
+									<i class="fa fa-map"></i>
+								</div>
+								<div>
+									<h3 class="font-medium">旅行规划师</h3>
+									<p class="chat-header-status text-sm text-white/80">在线 - 为您规划完美旅程</p>
+								</div>
+							</div>
+							<div class="flex space-x-3">
+								<button class="text-white/80 hover:text-white transition-colors status-toggle" data-widget="travel-chat-widget">
+									<i class="fa fa-expand"></i>
+								</button>
+								<button class="text-white/80 hover:text-white transition-colors">
+									<i class="fa fa-ellipsis-v"></i>
+								</button>
+							</div>
+						</div>
+
+						<div class="chat-messages" id="travel-messages">
+							<!-- 初始消息 -->
+							<div class="chat-message chat-message-bot flex items-start animate-slide-up">
+								<div class="chat-avatar chat-avatar-bot bg-primary/80 mr-3">
+									<i class="fa fa-map"></i>
+								</div>
+								<div class="chat-content chat-content-bot">
+									<div class="chat-bubble chat-bubble-bot shadow-md">
+										<p>您好！我是您的AI旅行规划师，很高兴为您服务。请问您有什么旅行计划或问题需要帮助吗？</p>
+										<div class="mt-3 flex flex-wrap gap-2">
+											<button class="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+												目的地推荐
+											</button>
+											<button class="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+												行程规划
+											</button>
+											<button class="text-xs text-primary bg-primary/10 px-3 py-1 rounded-full hover:bg-primary/20 transition-colors">
+												预算评估
+											</button>
+										</div>
+									</div>
+									<span class="chat-time chat-time-bot">刚刚</span>
+								</div>
+							</div>
+
+							<!-- 示例消息 -->
+							<div class="chat-message chat-message-user flex items-start justify-end animate-slide-up" style="animation-delay: 0.1s">
+								<div class="chat-content chat-content-user">
+									<div class="chat-bubble chat-bubble-user shadow-md">
+										<p>你好，我想在暑假带家人去云南旅游，能帮我规划一下吗？</p>
+									</div>
+									<span class="chat-time text-right">5分钟前</span>
+								</div>
+								<div class="chat-avatar chat-avatar-user bg-neutral-400 ml-3">
+									<i class="fa fa-user"></i>
+								</div>
+							</div>
+
+							<div class="chat-message chat-message-bot flex items-start animate-slide-up" style="animation-delay: 0.2s">
+								<div class="chat-avatar chat-avatar-bot bg-primary/80 mr-3">
+									<i class="fa fa-map"></i>
+								</div>
+								<div class="chat-content chat-content-bot">
+									<div class="chat-bubble chat-bubble-bot shadow-md">
+										<p>当然可以！暑假是云南旅游的旺季，天气宜人，景色优美。为了更好地为您规划行程，请问您计划在云南停留几天？您的家人中是否有老人或小孩？您的预算大概是多少？</p>
+									</div>
+									<span class="chat-time chat-time-bot">3分钟前</span>
+								</div>
+							</div>
+
+							<!-- 正在输入 -->
+							<div class="chat-message chat-message-bot flex items-start animate-slide-up">
+								<div class="chat-avatar chat-avatar-bot bg-primary/80 mr-3">
+									<i class="fa fa-map"></i>
+								</div>
+								<div class="typing-indicator ml-3 mt-4">
+									<span class="typing-dot"></span>
+									<span class="typing-dot"></span>
+									<span class="typing-dot"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="chat-input-area">
+							<button class="text-neutral-400 hover:text-primary transition-colors mr-3">
+								<i class="fa fa-paperclip text-xl"></i>
+							</button>
+							<input type="text"
+								   id="travel-input"
+								   placeholder="输入您的旅行需求..."
+								   class="chat-input">
+							<button id="travel-send-btn" class="chat-send-btn btn-hover">
+								<i class="fa fa-paper-plane text-lg"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- 功能按钮 -->
+				<div class="flex flex-wrap justify-center gap-4 mt-10">
+					<button class="bg-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center transform hover:-translate-y-1 hover:shadow-xl" data-query="热门目的地推荐">
+						<i class="fa fa-map-marker text-primary mr-2"></i> 目的地推荐
+					</button>
+					<button class="bg-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center transform hover:-translate-y-1 hover:shadow-xl" data-query="最佳旅行时间">
+						<i class="fa fa-calendar text-primary mr-2"></i> 最佳旅行时间
+					</button>
+					<button class="bg-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center transform hover:-translate-y-1 hover:shadow-xl" data-query="旅行预算规划">
+						<i class="fa fa-money text-primary mr-2"></i> 旅行预算规划
+					</button>
+				</div>
+			</div>
+		</section>
+
+	
+
+		<!--查看游记区-->
+		<section id="travel-note" class="flex-grow pt-16 md:pt-20">
+			<div class="text-center mb-12">
+				<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">游记专区</h2>
+				<p class="text-neutral-500 max-w-2xl mx-auto">查看他人的游记和写游记吧！</p>
+			</div>
+			<!-- 搜索框 -->
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-4">
+				<div class="relative">
+					<input type="text" id="search-input" placeholder="搜索游记标题、目的地或内容..."
+						   class="w-full px-4 py-3 pr-10 rounded-xl border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+					<button id="search-button" class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary transition-colors">
+						<i class="fa fa-search text-lg"></i>
+					</button>
+				</div>
+			</div>
+
+			<!-- 日志内容区 -->
+			<section class="py-6 md:py-10 bg-neutral-100">
+				<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+					<div class="flex flex-col lg:flex-row gap-8">
+						<!-- 左侧：日志列表 -->
+						<div class="lg:w-2/3">
+							<!-- 日志筛选和排序 -->
+							<div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+								<div class="flex flex-wrap items-center justify-between gap-4">
+									<div class="flex flex-wrap items-center gap-3">
+										<div class="relative">
+											<select id="category-filter" class="appearance-none bg-neutral-50 border border-neutral-200 text-neutral-700 py-2 pl-4 pr-10 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-primary">
+												<option value="">所有分类</option>
+												<option value="国内旅行">国内旅行</option>
+												<option value="境外旅行">境外旅行</option>
+												<option value="美食探索">美食探索</option>
+												<option value="自然风光">自然风光</option>
+												<option value="文化历史">文化历史</option>
+											</select>
+											<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+												<i class="fa fa-chevron-down text-xs"></i>
+											</div>
+										</div>
+
+										<div class="relative">
+											<select id="sort-filter" class="appearance-none bg-neutral-50 border border-neutral-200 text-neutral-700 py-2 pl-4 pr-10 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-primary">
+												<option value="createdDate_desc">最新发布</option>
+												<option value="likes_desc">最多收藏</option>
+												<option value="views_desc">最多浏览</option>
+											</select>
+											<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-400">
+												<i class="fa fa-chevron-down text-xs"></i>
+											</div>
+										</div>
+									</div>
+
+									<div class="flex items-center gap-2">
+										<button id="grid-view-btn" class="btn-outline flex items-center">
+											<i class="fa fa-th-large mr-2"></i> 网格
+										</button>
+										<button id="list-view-btn" class="bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50 font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center">
+											<i class="fa fa-list mr-2"></i> 列表
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- 日志列表 -->
+							<div id="journals-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+								<!-- 日志卡片将通过JavaScript动态生成 -->
+							</div>
+
+							<!-- 加载更多 -->
+							<div id="loading-more" class="mt-8 text-center hidden">
+								<div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+								<p class="mt-2 text-neutral-500">加载更多日志...</p>
+							</div>
+
+							<!-- 分页控件 -->
+							<div id="pagination-container" class="mt-10 flex justify-center">
+								<!-- 分页按钮将通过JavaScript动态生成 -->
+							</div>
+						</div>
+
+						<!-- 右侧：热门标签和目的地 -->
+						<div class="lg:w-1/3 space-y-8">
+							<div class="flex items-center">
+								<button id="create-journal-btn" class="btn-primary hidden md:flex items-center">
+									<i class="fa fa-pencil mr-2"></i> 新建日志
+								</button>
+							</div>
+							<!-- 热门目的地 -->
+							<div class="bg-white rounded-xl shadow-sm p-6">
+								<h3 class="font-semibold text-lg text-neutral-700 mb-4 flex items-center">
+									<i class="fa fa-map-marker text-primary mr-2"></i> 热门目的地
+								</h3>
+								<div class="space-y-4" id="popular-destinations">
+									<!-- 热门目的地将通过JavaScript动态生成 -->
+								</div>
+							</div>
+
+							<!-- 热门标签 -->
+							<div class="bg-white rounded-xl shadow-sm p-6">
+								<h3 class="font-semibold text-lg text-neutral-700 mb-4 flex items-center">
+									<i class="fa fa-tags text-primary mr-2"></i> 热门标签
+								</h3>
+								<div class="flex flex-wrap gap-2" id="popular-tags">
+									<!-- 热门标签将通过JavaScript动态生成 -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+	
+
+	        <!-- 新建日志模态框 -->
+	        <div id="create-journal-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+		<div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col transform scale-95 transition-all duration-300">
+			<!-- 模态框头部 -->
+			<div class="p-6 border-b border-neutral-200 flex items-center justify-between">
+				<h3 class="font-semibold text-xl text-neutral-700">新建旅行日志</h3>
+				<button id="close-modal-btn" class="text-neutral-400 hover:text-neutral-700 transition-colors">
+					<i class="fa fa-times text-xl"></i>
+				</button>
+			</div>
+
+			<!-- 模态框内容 -->
+			<div class="flex-grow overflow-y-auto p-6">
+				<form id="journal-form" enctype="multipart/form-data">
+					<!-- 日志标题 -->
+					<div class="mb-6">
+						<label for="journal-title" class="block text-sm font-medium text-neutral-700 mb-2">日志标题</label>
+						<input type="text"
+							   id="journal-title"
+							   name="Title"
+							   placeholder="输入您的日志标题"
+							   class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+							   required>
+					</div>
+
+					<!-- 目的地 -->
+					<div class="mb-6">
+						<label for="journal-destination" class="block text-sm font-medium text-neutral-700 mb-2">目的地</label>
+						<input type="text"
+							   id="journal-destination"
+							   name="Destination"
+							   placeholder="输入您的旅行目的地"
+							   class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+							   required>
+					</div>
+
+					<!-- 旅行日期 -->
+					<div class="mb-6">
+						<label class="block text-sm font-medium text-neutral-700 mb-2">旅行日期</label>
+						<div class="grid grid-cols-2 gap-4">
+							<div>
+								<label for="start-date" class="block text-xs text-neutral-500 mb-1">开始日期</label>
+								<input type="date"
+									   id="start-date"
+									   name="StartDate"
+									   class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+									   required>
+							</div>
+							<div>
+								<label for="end-date" class="block text-xs text-neutral-500 mb-1">结束日期</label>
+								<input type="date"
+									   id="end-date"
+									   name="EndDate"
+									   class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+									   required>
+							</div>
+						</div>
+					</div>
+
+					<!-- 日志分类 -->
+					<div class="mb-6">
+						<label for="journal-category" class="block text-sm font-medium text-neutral-700 mb-2">日志分类</label>
+						<select id="journal-category"
+								name="Category"
+								class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all appearance-none bg-white"
+								required>
+							<option value="">请选择分类</option>
+							<option value="国内旅行">国内旅行</option>
+							<option value="境外旅行">境外旅行</option>
+							<option value="美食探索">美食探索</option>
+							<option value="自然风光">自然风光</option>
+							<option value="文化历史">文化历史</option>
+							<option value="城市漫步">城市漫步</option>
+							<option value="亲子游">亲子游</option>
+							<option value="独自旅行">独自旅行</option>
+						</select>
+					</div>
+
+					<!-- 日志内容 -->
+					<div class="mb-6">
+						<label for="journal-content" class="block text-sm font-medium text-neutral-700 mb-2">日志内容</label>
+						<div class="border border-neutral-200 rounded-lg overflow-hidden">
+							<div class="bg-neutral-50 p-2 border-b border-neutral-200 flex items-center space-x-3">
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('bold', false, null)">
+									<i class="fa fa-bold"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('italic', false, null)">
+									<i class="fa fa-italic"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('underline', false, null)">
+									<i class="fa fa-underline"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('createLink', false, prompt('请输入链接地址'))">
+									<i class="fa fa-link"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('insertUnorderedList', false, null)">
+									<i class="fa fa-list-ul"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('insertOrderedList', false, null)">
+									<i class="fa fa-list-ol"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('insertImage', false, prompt('请输入图片地址'))">
+									<i class="fa fa-image"></i>
+								</button>
+								<button type="button" class="p-1.5 hover:bg-neutral-200 rounded transition-colors" onclick="document.execCommand('bold', false, null)">
+									<i class="fa fa-bold"></i>
+								</button>
+								<!-- 新增 AI 按钮 -->
+								<button type="button" class="p-1.5 hover:bg-blue-200 rounded transition-colors group" onclick="aiEnhanceContent()">
+									<span class="flex items-center space-x-2">
+										<i class="fa fa-magic group-hover:opacity-70"></i>
+										<span class="loading-text">AI 优化</span>
+										<div class="spinner hidden w-5 h-5 border-2 border-t-primary border-opacity-75 rounded-full animate-spin"></div>
+									</span>
+								</button>
+
+								<button type="button" class="p-1.5 hover:bg-green-200 rounded transition-colors group" onclick="aiCompleteContent()">
+									<span class="flex items-center space-x-2">
+										<i class="fa fa-pencil-alt group-hover:opacity-70"></i>
+										<span class="loading-text">AI 补全</span>
+										<div class="spinner hidden w-5 h-5 border-2 border-t-primary border-opacity-75 rounded-full animate-spin"></div>
+									</span>
+								</button>
+							</div>
+							<textarea id="journal-content"
+									  name="Content"
+									  rows="10"
+									  placeholder="分享您的旅行经历和感受..."
+									  class="w-full px-4 py-3 outline-none resize-none"
+									  required></textarea>
+						</div>
+					</div>
+
+					<!-- 上传图片 -->
+					<div class="mb-6">
+						<label class="block text-sm font-medium text-neutral-700 mb-2">上传封面图片</label>
+						<div class="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+							<input type="file" id="cover-image" name="CoverImageFile" class="hidden" accept="image/*">
+							<label for="cover-image" class="cursor-pointer">
+								<div class="flex flex-col items-center">
+									<i class="fa fa-cloud-upload text-4xl text-neutral-400 mb-2"></i>
+									<p class="text-neutral-700 font-medium mb-1">点击上传封面图片</p>
+									<p class="text-neutral-500 text-sm">支持 JPG, PNG, WEBP 格式，最大 5MB</p>
+								</div>
+							</label>
+							<div id="image-preview" class="mt-4 hidden">
+								<img id="preview-img" src="" alt="预览图" class="max-w-full h-auto rounded-lg border border-neutral-200">
+								<button type="button" id="remove-image" class="mt-2 text-red-500 hover:text-red-700">
+									<i class="fa fa-times-circle"></i> 移除图片
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- 标签 -->
+					<div class="mb-6">
+						<label class="block text-sm font-medium text-neutral-700 mb-2">标签</label>
+						<div class="flex flex-wrap gap-2 mb-2" id="tags-container">
+							<!-- 标签将通过JavaScript动态生成 -->
+						</div>
+						<div class="flex">
+							<input type="text"
+								   id="tag-input"
+								   placeholder="添加标签，按 Enter 确认"
+								   class="flex-grow px-4 py-3 rounded-l-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+							<button type="button" id="add-tag-btn" class="bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-4 py-3 rounded-r-lg transition-colors">
+								<i class="fa fa-plus"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<!-- 模态框底部 -->
+			<div class="p-6 border-t border-neutral-200 flex justify-end space-x-3">
+				<button id="save-draft-btn" class="btn-secondary">
+					保存草稿
+				</button>
+				<button id="publish-journal-btn" class="btn-primary">
+					发布日志
+				</button>
+			</div>
+		</div>
+	</div>
+
+		</section>
+
+
+
+		<!-- 用户评价 -->
+		<section id="reviews" class="py-16 md:py-24 b">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="text-center mb-12">
+					<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">用户的真实体验</h2>
+					<p class="text-neutral-500 max-w-2xl mx-auto">看看其他旅行者如何规划他们的完美旅程</p>
+				</div>
+				<div class="container mx-auto px-4 py-8">
+					<!-- 搜索和筛选 -->
+					<div class="bg-white rounded-xl p-6 mb-8 card-shadow">
+						<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+							<div class="md:col-span-2">
+								<label class="block text-sm font-medium text-gray-700 mb-1">搜索</label>
+								<div class="relative">
+									<input type="text" id="searchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" placeholder="搜索标题或内容...">
+									<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<i class="fa fa-search text-gray-400"></i>
+									</div>
+								</div>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-gray-700 mb-1">排序</label>
+								<select id="sortSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+									<option value="createdDate_desc">最新创建</option>
+									<option value="createdDate_asc">最早创建</option>
+									<option value="star_desc">评分最高</option>
+									<option value="star_asc">评分最低</option>
+								</select>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-gray-700 mb-1">每页显示数量</label>
+								<select id="pageSizeSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all">
+									<option value="5">5条</option>
+									<option value="10" selected>10条</option>
+									<option value="15">15条</option>
+									<option value="20">20条</option>
+								</select>
+							</div>
+							<div>
+								<button id="addCommentBtn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center shadow-md hover:shadow-lg">
+									<i class="fa fa-plus mr-2"></i> 添加评论
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- 评论列表 -->
+					<div id="commentsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+						<!-- 评论卡片将通过JavaScript动态加载 -->
+					</div>
+
+					<!-- 分页 -->
+					<div class="flex justify-between items-center mt-8">
+						<div class="text-sm text-gray-600" id="paginationInfo">
+							显示 1-10 条，共 0 条
+						</div>
+						<div class="flex space-x-1" id="paginationControls">
+							<!-- 分页按钮将通过JavaScript动态加载 -->
+						</div>
+					</div>
+				</div>
+
+				<!-- 添加/编辑评论模态框 -->
+				<div id="commentModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+					<!-- 模态框内容 -->
+					<div class="relative w-full max-w-2xl z-10">
+						<div class="relative bg-white rounded-xl shadow-xl overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="commentModalContent">
+							<div class="flex justify-between items-center px-6 py-4 border-b">
+								<h2 id="modalTitle" class="text-xl font-bold text-gray-800">添加评论</h2>
+								<button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+									<i class="fa fa-times text-xl"></i>
+								</button>
+							</div>
+							<div class="p-6">
+								<form id="commentForm" enctype="multipart/form-data">
+									<input type="hidden" id="commentId" name="Id">
+									<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-1">标题 <span class="text-red-500">*</span></label>
+											<input type="text" id="title" name="Title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" required>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-1">作者 <span class="text-red-500">*</span></label>
+											<input type="text" id="author" name="Author" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" required>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-1">评分 <span class="text-red-500">*</span></label>
+											<div class="flex items-center">
+												<select id="star" name="Star" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" required>
+													<option value="1">1星</option>
+													<option value="2">2星</option>
+													<option value="3">3星</option>
+													<option value="4">4星</option>
+													<option value="5">5星</option>
+												</select>
+												<div class="ml-2 star-rating">
+													<i class="fa fa-star"></i>
+												</div>
+											</div>
+										</div>
+										<div>
+											<label class="block text-sm font-medium text-gray-700 mb-1">头像</label>
+											<div class="flex items-center">
+												<input type="file" id="imgfile" name="Imgfile" class="hidden" accept="image/*">
+												<button type="button" id="uploadBtn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all mr-2">
+													<i class="fa fa-upload mr-1"></i> 上传图片
+												</button>
+												<div id="imagePreviewContainer" class="hidden">
+													<img id="imagePreview" src="" alt="预览图" class="w-10 h-10 rounded-full object-cover">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="mb-6">
+										<label class="block text-sm font-medium text-gray-700 mb-1">内容 <span class="text-red-500">*</span></label>
+										<textarea id="content" name="Content" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all resize-none" required></textarea>
+									</div>
+									<div class="flex justify-end space-x-3">
+										<button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">取消</button>
+										<button type="submit" id="saveBtn" class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all shadow-md hover:shadow-lg">保存</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 删除确认模态框 -->
+				<div id="deleteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+					<!-- 模态框内容 -->
+					<div class="relative w-full max-w-md z-10">
+						<div class="relative bg-white rounded-xl shadow-xl overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="deleteModalContent">
+							<div class="p-6">
+								<div class="flex items-center justify-center mb-4">
+									<div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+										<i class="fa fa-exclamation-triangle text-red-500 text-xl"></i>
+									</div>
+								</div>
+								<h3 class="text-lg font-bold text-center text-gray-800 mb-2">确认删除</h3>
+								<p class="text-center text-gray-600 mb-6">你确定要删除这条评论吗？此操作不可撤销。</p>
+								<div class="flex justify-center space-x-3">
+									<button id="cancelDeleteBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">取消</button>
+									<button id="confirmDeleteBtn" class="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all shadow-md hover:shadow-lg">删除</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 通知组件 -->
+				<div id="notificationContainer" class="fixed top-4 right-4 max-w-xs z-50"></div>
+
+
+			</div>
+		</section>
+
+
+
+		<!--侧边栏语音助手-->
+		<section class="font-inter bg-neutral-50 min-h-screen relative">
+
+			<button id="chatToggle" class="fixed bottom-8 right-8 z-50 bg-gradient-to-br from-primary to-accent hover:opacity-90 text-white p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none flex items-center justify-center avatar-float">
+				<i class="fa fa-comments text-2xl"></i>
+			</button>
+
+			<div id="chatSidebar" class="fixed top-1/2 right-8 -translate-y-1/2 w-96 h-[700px] bg-white shadow-xl sidebar-hidden transition-all duration-300 ease-in-out z-40 rounded-xl overflow-hidden flex flex-col gradient-border origin-bottom-right">
+				<!-- 聊天头部 -->
+				<div class="bg-gradient-to-br from-primary to-accent text-white p-4 relative flex-shrink-0 overflow-hidden">
+					<!-- 装饰元素 -->
+					<div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full"></div>
+
+					<div class="flex items-center justify-between relative z-10">
+						<div class="flex items-center space-x-2 order-1">
+							<div class="bg-white/20 p-1.5 rounded-full avatar-float">
+								<i class="fa fa-robot text-lg"></i>
+							</div>
+							<div>
+								<h2 class="text-sm font-semibold">智能语音助手</h2>
+								<p class="text-xs text-white/80">随时为您服务</p>
+							</div>
+						</div>
+						<button id="closeChat" class="text-white/80 hover:text-white transition-colors order-2">
+							<i class="fa fa-times"></i>
+						</button>
+					</div>
+				</div>
+
+				<!-- 消息区域 -->
+				<div id="messages" class="p-3 space-y-3 flex-grow overflow-y-auto scrollbar-thin bg-neutral-50">
+					<!-- 欢迎消息 -->
+					<div class="chat-bubble-bot p-3 max-w-[90%] message-appear">
+						<div class="flex items-start space-x-2">
+							<div class="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white text-xs shadow-md avatar-float">
+								<i class="fa fa-robot"></i>
+							</div>
+							<div class="flex-1">
+								<p class="text-neutral-700 text-xs">你好！我是智能语音助手。点击下方麦克风按钮开始说话，我会回答你的问题。</p>
+								<p class="text-[10px] text-neutral-400 mt-1">试试问："今天天气如何？" 或 "推荐一个旅游景点"</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 输入区域（固定底部） -->
+				<div class="glass-effect p-3 flex-shrink-0">
+					<div class="flex justify-center mb-2">
+						<button id="chatMicBtn" class="voice-btn bg-gradient-to-br from-primary to-accent hover:opacity-90 text-white p-2.5 rounded-full shadow-lg transition-all duration-300 hover:scale-105 focus:outline-none group mic-pulse avatar-float">
+							<i id="micIcon" class="fa fa-microphone text-lg"></i>
+						</button>
+					</div>
+					<p id="statusText" class="text-center text-[10px] text-neutral-500">点击麦克风开始说话</p>
+				</div>
+			</div>
+		</section>
+
+
+
+
+
+
+
+
+		<!-- 订阅区域 -->
+		<section class="py-16 md:py-24 bg-white">
+			<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="max-w-3xl mx-auto text-center">
+					<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-700 mb-4">获取最新旅行灵感和优惠</h2>
+					<p class="text-neutral-500 mb-8">
+						订阅我们的电子邮件，获取AI精选的旅行灵感、限时优惠和独家折扣，让您的下一次旅行更加精彩。
+					</p>
+
+					<div class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+						<input type="email"
+							   placeholder="输入您的电子邮箱"
+							   class="flex-grow px-4 py-3 rounded-lg border border-neutral-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+						<button class="btn-primary whitespace-nowrap">
+							立即订阅 <i class="fa fa-paper-plane ml-2"></i>
+						</button>
+					</div>
+
+					<p class="text-neutral-400 text-sm mt-4">
+						我们尊重您的隐私，不会向任何第三方分享您的信息。您可以随时取消订阅。
+					</p>
+				</div>
+			</div>
+		</section>
+
+
+
+	  
+	</main>
+
+	<!-- 页脚 -->
+	<footer class="bg-neutral-800 text-white pt-16 pb-8">
+		<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+				<!-- 公司信息 -->
+				<div>
+					<div class="flex items-center space-x-2 mb-6">
+						<div class="bg-primary text-white p-2 rounded-lg">
+							<i class="fa fa-paper-plane text-xl"></i>
+						</div>
+						<span class="text-xl font-bold">旅途智多星</span>
+					</div>
+					<p class="text-neutral-400 mb-6">
+						让AI为您的旅行保驾护航，提供个性化的旅行规划和建议，让您的旅行更加轻松愉快。
+					</p>
+					<div class="flex space-x-4">
+						<a href="#" class="text-neutral-400 hover:text-white transition-colors">
+							<i class="fa fa-weixin text-xl"></i>
+						</a>
+						<a href="#" class="text-neutral-400 hover:text-white transition-colors">
+							<i class="fa fa-weibo text-xl"></i>
+						</a>
+						<a href="#" class="text-neutral-400 hover:text-white transition-colors">
+							<i class="fa fa-instagram text-xl"></i>
+						</a>
+						<a href="#" class="text-neutral-400 hover:text-white transition-colors">
+							<i class="fa fa-youtube-play text-xl"></i>
+						</a>
+					</div>
+				</div>
+
+				<!-- 快速链接 -->
+				<div>
+					<h3 class="font-semibold text-lg mb-6">快速链接</h3>
+					<ul class="space-y-3">
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">首页</a></li>
+						<li><a href="#destinations" class="text-neutral-400 hover:text-white transition-colors">目的地</a></li>
+						<li><a href="#itinerary" class="text-neutral-400 hover:text-white transition-colors">行程规划</a></li>
+						<li><a href="#recommendations" class="text-neutral-400 hover:text-white transition-colors">智能推荐</a></li>
+						<li><a href="#reviews" class="text-neutral-400 hover:text-white transition-colors">用户评价</a></li>
+						<li><a href="#ai-assistant" class="text-neutral-400 hover:text-white transition-colors">AI助手</a></li>
+					</ul>
+				</div>
+
+				<!-- 支持 -->
+				<div>
+					<h3 class="font-semibold text-lg mb-6">支持</h3>
+					<ul class="space-y-3">
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">常见问题</a></li>
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">联系我们</a></li>
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">隐私政策</a></li>
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">服务条款</a></li>
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">退款政策</a></li>
+						<li><a href="#" class="text-neutral-400 hover:text-white transition-colors">旅行保险</a></li>
+					</ul>
+				</div>
+
+				<!-- 联系信息 -->
+				<div>
+					<h3 class="font-semibold text-lg mb-6">联系我们</h3>
+					<ul class="space-y-3">
+						<li class="flex items-start">
+							<i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+							<span class="text-neutral-400">武汉大学软件构造大作业</span>
+						</li>
+						<li class="flex items-center">
+							<i class="fa fa-phone text-primary mr-3"></i>
+							<span class="text-neutral-400">111-111-111</span>
+						</li>
+						<li class="flex items-center">
+							<i class="fa fa-envelope text-primary mr-3"></i>
+							<span class="text-neutral-400">contact@tripmaster.ai</span>
+						</li>
+						<li class="flex items-center">
+							<i class="fa fa-clock-o text-primary mr-3"></i>
+							<span class="text-neutral-400">周一至周日 9:00-21:00</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- 版权信息 -->
+			<div class="border-t border-neutral-700 pt-8">
+				<div class="flex flex-col md:flex-row justify-between items-center">
+					<p class="text-neutral-500 text-sm mb-4 md:mb-0">
+						&copy; 2025 旅途智多星. 保留所有权利.
+					</p>
+					<div class="flex space-x-6">
+						<a href="#" class="text-neutral-500 hover:text-white text-sm transition-colors">隐私政策</a>
+						<a href="#" class="text-neutral-500 hover:text-white text-sm transition-colors">服务条款</a>
+						<a href="#" class="text-neutral-500 hover:text-white text-sm transition-colors">Cookie政策</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+
+
+
+	<!-- JavaScript -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// 旅行规划助手逻辑
+			const travelInput = document.getElementById('travel-input');
+			const travelSendBtn = document.getElementById('travel-send-btn');
+			const travelMessages = document.getElementById('travel-messages');
+			const travelFeatureButtons = document.querySelectorAll('[data-query]');
+
+			// 获取搜索按钮和输入框
+			const heroSearchBtn = document.getElementById('hero-search-btn1');
+			const heroSearchInput = document.getElementById('ai-search1');
+		
+			// 绑定搜索按钮点击事件
+			heroSearchBtn.addEventListener('click', () => {
+				const message = heroSearchInput.value.trim();
+				var target = document.getElementById('travel-planner');
+				target.scrollIntoView({ behavior: 'smooth' });
+					if (message) {
+					// 调用旅行助手的消息发送函数
+					sendMessage('travel', message);
+					heroSearchInput.value = '';
+				}
+			});
+
+			// 为输入框添加回车键触发搜索
+			heroSearchInput.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+					const message = heroSearchInput.value.trim();
+					if (message) {
+						sendMessage('travel', message);
+						heroSearchInput.value = '';
+					}
+				}
+			});
+	
+			// 绑定旅行助手事件
+			travelSendBtn.addEventListener('click', () => {
+				sendMessage('travel', travelInput.value);
+				travelInput.value = '';
+			});
+
+			travelInput.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+					sendMessage('travel', travelInput.value);
+					travelInput.value = '';
+				}
+			});
+
+			travelFeatureButtons.forEach(button => {
+				button.addEventListener('click', () => {
+					const query = button.dataset.query;
+					sendMessage('travel', `请帮我${query}`);
+				});
+			});
+
+			// 聊天窗口状态切换功能
+			const statusToggles = document.querySelectorAll('.status-toggle');
+			statusToggles.forEach(toggle => {
+				toggle.addEventListener('click', function () {
+					const widgetId = this.dataset.widget;
+					const widget = document.getElementById(widgetId);
+					const icon = this.querySelector('i');
+
+					if (widget.classList.contains('chat-widget-fullscreen')) {
+						// 恢复原始大小
+						widget.classList.remove('chat-widget-fullscreen');
+						icon.classList.remove('fa-compress');
+						icon.classList.add('fa-expand');
+						// 恢复body的滚动
+						document.body.style.overflow = '';
+					} else {
+						// 全屏显示
+						widget.classList.add('chat-widget-fullscreen');
+						icon.classList.remove('fa-expand');
+						icon.classList.add('fa-compress');
+						// 防止背景滚动
+						document.body.style.overflow = 'hidden';
+					}
+				});
+			});
+
+			// 发送消息
+			async function sendMessage(assistantType, message) {
+				if (!message.trim()) return;
+
+				// 显示用户消息
+				appendMessage(assistantType, 'user', message);
+
+				// 显示输入状态
+				showTypingIndicator(assistantType);
+
+				// 创建AbortController用于取消请求
+				const controller = new AbortController();
+				const signal = controller.signal;
+
+				// 设置超时时间
+				const timeoutId = setTimeout(() => {
+					controller.abort(); // 超时后取消请求
+				}, 300000); // 300秒超时
+
+				try {
+					console.log('开始发送请求到 DeepSeek，输入文本:', message);
+					const response = await fetch("api/DeepSeek/CallDeepSeek", {
+						method: "POST",
+						body: new URLSearchParams({ inputText: message }),
+						signal: signal
+					});
+
+					console.log('DeepSeek 请求响应状态:', response.status);
+					if (!response.ok) {
+						throw new Error('请求失败，状态码: ' + response.status);
+					}
+
+					const completeText = await response.text();
+
+					// 移除输入状态
+					removeTypingIndicator(assistantType);
+
+					// 显示AI回复
+					appendMessage(assistantType, assistantType === 'travel' ? 'bot' : 'voice', completeText);
+				} catch (error) {
+					removeTypingIndicator(assistantType);
+
+					if (error.name === 'AbortError') {
+						appendMessage(assistantType, assistantType === 'travel' ? 'bot' : 'voice', '请求超时，请重试。');
+					} else {
+						appendMessage(assistantType, assistantType === 'travel' ? 'bot' : 'voice', '抱歉，暂时无法获取回复，请稍后再试。');
+					}
+
+					console.error('API调用失败:', error);
+				} finally {
+					clearTimeout(timeoutId); // 清除超时计时器
+				}
+			}
+
+			// 添加消息到聊天界面
+			function appendMessage(assistantType, sender, text) {
+				const container = assistantType === 'travel' ? travelMessages : voiceMessages;
+
+				const messageDiv = document.createElement('div');
+				messageDiv.className = `chat-message chat-message-${sender === 'user' ? 'user' : 'bot'} flex items-start mb-4 opacity-0 transform translate-y-4 transition-all duration-300`;
+
+				const avatarClass = sender === 'user' ? 'chat-avatar-user' : 'chat-avatar-bot';
+				const avatarIcon = sender === 'user' ? 'fa-user' : sender === 'bot' ? 'fa-map' : 'fa-robot';
+				const contentClass = sender === 'user' ? 'chat-content-user' : 'chat-content-bot';
+				const senderName = sender === 'user' ? '你' : sender === 'bot' ? '旅行助手' : '语音助手';
+				const bubbleClass = sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot';
+				const avatarBg = sender === 'user' ? 'bg-neutral-400' : 'bg-primary/80';
+
+				messageDiv.innerHTML = `
+										${sender === 'user' ? '' : `
+										<div class="chat-avatar ${avatarClass} ${avatarBg} mr-3">
+											<i class="fa ${avatarIcon}"></i>
+										</div>
+										`}
+										<div class="${contentClass} ${sender === 'user' ? 'ml-auto' : ''}">
+											<div class="chat-bubble ${bubbleClass} shadow-md animate-scale-in">
+												<p>${text}</p>
+											</div>
+											<span class="chat-time ${sender === 'user' ? 'text-right block' : ''}">${senderName} · ${new Date().toLocaleTimeString()}</span>
+										</div>
+										${sender === 'user' ? `
+										<div class="chat-avatar ${avatarClass} ${avatarBg} ml-3">
+											<i class="fa ${avatarIcon}"></i>
+										</div>
+										` : ''}
+									`;
+
+				container.appendChild(messageDiv);
+				container.scrollTop = container.scrollHeight;
+
+				// 触发动画
+				setTimeout(() => {
+					messageDiv.classList.remove('opacity-0', 'translate-y-4');
+				}, 10);
+			}
+
+			// 显示输入中动画
+			function showTypingIndicator(assistantType) {
+				const container = assistantType === 'travel' ? travelMessages : voiceMessages;
+
+				// 先移除已有的输入指示器
+				removeTypingIndicator(assistantType);
+
+				const typingDiv = document.createElement('div');
+				typingDiv.className = 'chat-message chat-message-bot flex items-start opacity-0 transform translate-y-4 transition-all duration-300';
+				typingDiv.innerHTML = `
+										<div class="chat-avatar chat-avatar-bot bg-primary/80 mr-3">
+											<i class="fa ${assistantType === 'travel' ? 'fa-map' : 'fa-robot'}"></i>
+										</div>
+										<div class="typing-indicator ml-3 mt-4">
+											<span class="typing-dot"></span>
+											<span class="typing-dot"></span>
+											<span class="typing-dot"></span>
+										</div>
+									`;
+
+				container.appendChild(typingDiv);
+				container.scrollTop = container.scrollHeight;
+
+				// 触发动画
+				setTimeout(() => {
+					typingDiv.classList.remove('opacity-0', 'translate-y-4');
+				}, 10);
+			}
+
+			// 移除输入中动画
+			function removeTypingIndicator(assistantType) {
+				const container = assistantType === 'travel' ? travelMessages : voiceMessages;
+				const typingDiv = container.querySelector('.typing-indicator');
+
+				if (typingDiv) {
+					const messageDiv = typingDiv.closest('.chat-message');
+					messageDiv.classList.add('opacity-0', 'translate-y-4');
+					setTimeout(() => {
+						messageDiv.remove();
+					}, 300);
+				}
+			}
+
+			// 平滑滚动到顶部
+			document.querySelector('h1').addEventListener('click', () => {
+				window.scrollTo({
+					top: 0,
+					behavior: 'smooth'
+				});
+			});
+		});
+	</script>
+
+
+
+	<script>
+		// 导航栏滚动效果
+		const navbar = document.getElementById('navbar');
+		window.addEventListener('scroll', () => {
+			if (window.scrollY > 50) {
+				navbar.classList.add('bg-white', 'shadow-md');
+				navbar.classList.remove('bg-transparent');
+			} else {
+				navbar.classList.remove('bg-white', 'shadow-md');
+				navbar.classList.add('bg-transparent');
+			}
+		});
+
+		// 移动端菜单切换
+		const mobileMenuButton = document.getElementById('mobile-menu-button');
+		const mobileMenu = document.getElementById('mobile-menu');
+		mobileMenuButton.addEventListener('click', () => {
+			mobileMenu.classList.toggle('hidden');
+		});
+
+		// 平滑滚动
+		document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+			anchor.addEventListener('click', function (e) {
+				e.preventDefault();
+				const targetId = this.getAttribute('href');
+				const targetElement = document.querySelector(targetId);
+				if (targetElement) {
+					window.scrollTo({
+						top: targetElement.offsetTop - 80,
+						behavior: 'smooth'
+					});
+
+					// 关闭移动端菜单
+					if (!mobileMenu.classList.contains('hidden')) {
+						mobileMenu.classList.add('hidden');
+					}
+				}
+			});
+		});
+
+		
+
+
+		const itinerary1 = document.getElementById('itinerary1');
+		const itinerary2 = document.getElementById('itinerary2');
+
+		function recommend_ai() {
+
+			itinerary1.style.display = 'none';
+
+			itinerary2.style.display = 'block';
+		}
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+	</script>
+
+
+
+	<script>
+		//行程生成逻辑
+		document.addEventListener('DOMContentLoaded', function () {
+			const form = document.getElementById('itineraryForm');
+			const loadingState = document.getElementById('loadingState');
+			const resultContainer = document.getElementById('resultContainer');
+			const emptyState = document.getElementById('emptyState');
+			const daysList = document.getElementById('daysList');
+			const destinationHeader = document.getElementById('destinationHeader');
+			const tripInfo = document.getElementById('tripInfo');
+			const generateBtn = document.getElementById('generateBtn');
+
+			form.addEventListener('submit', async function (e) {
+				e.preventDefault();
+
+				// 显示加载状态
+				emptyState.classList.add('hidden');
+				resultContainer.classList.add('hidden');
+				loadingState.classList.remove('hidden');
+				generateBtn.disabled = true;
+				generateBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 生成中...';
+
+				try {
+					// 获取表单数据
+					const formData = new FormData(form);
+					const requestData = {
+						destination: formData.get('destination'),
+						days: parseInt(formData.get('days')),
+						budget: parseFloat(formData.get('budget')),
+						travelStyle: formData.get('travelStyle')
+					};
+
+					// 构建发送给DeepSeek的提示词
+					const prompt = `我计划去${requestData.destination}旅行${requestData.days}天，预算为${requestData.budget}元，旅行风格偏好${requestData.travelStyle}。请为我生成一份详细的旅行行程，包括每天的景点、餐饮和住宿推荐，以及大致的费用分配。请以JSON格式返回，结构如下：
+								{
+								  "destination": "${requestData.destination}",
+								  "days": ${requestData.days},
+								  "dailyItineraries": [
+									{
+									  "day": 1,
+									  "items": [
+										{
+										  "name": "景点/活动名称",
+										  "time": "时间范围",
+										  "description": "详细描述",
+										  "category": "景点/餐饮/住宿",
+										  "price": "费用"
+										}
+									  ]
+									}
+								  ]
+								}`;
+
+					// 发送请求到DeepSeek API控制器
+					const response = await fetch('/api/DeepSeek/CallDeepSeek', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						body: `inputText=${encodeURIComponent(prompt)}`
+					});
+
+					if (!response.ok) {
+						throw new Error(`API调用失败: ${response.statusText}`);
+					}
+
+					// 解析DeepSeek返回的内容
+					const aiResponse = await response.text();
+
+					// 尝试将AI返回的内容解析为JSON
+					let itinerary;
+					try {
+						// 处理可能包含额外文本的响应
+						const jsonStart = aiResponse.indexOf('{');
+						const jsonEnd = aiResponse.lastIndexOf('}') + 1;
+						const jsonContent = aiResponse.substring(jsonStart, jsonEnd);
+
+						itinerary = JSON.parse(jsonContent);
+					} catch (parseError) {
+						console.error('解析AI响应失败:', parseError);
+						console.log('原始AI响应:', aiResponse);
+
+						// 如果无法解析JSON，尝试使用备用解析方法
+						itinerary = parseItineraryFromText(aiResponse, requestData);
+					}
+
+					renderItinerary(itinerary, requestData);
+				} catch (error) {
+					console.error('Error:', error);
+					alert(`生成行程失败: ${error.message}`);
+					emptyState.classList.remove('hidden');
+				} finally {
+					loadingState.classList.add('hidden');
+					generateBtn.disabled = false;
+					generateBtn.innerHTML = '<i class="fa fa-magic mr-2"></i> 生成我的行程';
+				}
+			});
+
+			// 备用解析方法，当AI没有返回标准JSON时使用
+			function parseItineraryFromText(text, requestData) {
+				// 这是一个简化的解析器，实际应用中可能需要更复杂的逻辑
+				const days = [];
+				const dayRegex = /第(\d+)天[\s\S]*?（[\s\S]*?）/g;
+				let match;
+
+				while ((match = dayRegex.exec(text)) !== null) {
+					const dayNumber = parseInt(match[1]);
+					const dayContent = match[0];
+
+					const items = [];
+					const itemRegex = /【([^】]+)】[\s\S]*?时间：([^，]+)，[\s\S]*?描述：([^，]+)，[\s\S]*?类别：([^，]+)，[\s\S]*?费用：([^\n]+)/g;
+					let itemMatch;
+
+					while ((itemMatch = itemRegex.exec(dayContent)) !== null) {
+						items.push({
+							name: itemMatch[1],
+							time: itemMatch[2],
+							description: itemMatch[3],
+							category: itemMatch[4],
+							price: itemMatch[5]
+						});
+					}
+
+					days.push({
+						day: dayNumber,
+						items: items
+					});
+				}
+
+				return {
+					destination: requestData.destination,
+					days: requestData.days,
+					dailyItineraries: days
+				};
+			}
+
+			function renderItinerary(itinerary, requestData) {
+				// 更新头部信息
+				destinationHeader.textContent = `${itinerary.destination} ${itinerary.days}天行程规划`;
+				tripInfo.textContent = `预算：${requestData.budget}元 | 风格：${requestData.travelStyle}`;
+
+				// 清空并填充行程内容
+				daysList.innerHTML = '';
+
+				// 确保我们有每日行程数据
+				if (!itinerary.dailyItineraries || itinerary.dailyItineraries.length === 0) {
+					daysList.innerHTML = `
+								  <div class="bg-white rounded-lg shadow-sm p-6 text-center">
+									<div class="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
+									  <i class="fa fa-info-circle text-neutral-400 text-2xl"></i>
+									</div>
+									<h3 class="text-lg font-medium text-neutral-700">行程解析结果</h3>
+									<p class="text-neutral-500 mt-2">AI生成了行程内容，但格式可能需要调整。请查看下方原始内容：</p>
+									<pre class="mt-4 p-4 bg-neutral-50 rounded-lg text-sm overflow-x-auto">${JSON.stringify(itinerary, null, 2)}</pre>
+								  </div>
+								`;
+					return;
+				}
+
+				itinerary.dailyItineraries.forEach((day, index) => {
+					const dayElement = document.createElement('div');
+					dayElement.className = 'bg-white rounded-lg shadow-sm overflow-hidden';
+
+					// 日期标题
+					dayElement.innerHTML = `
+								  <div class="bg-primary/10 p-4 flex items-center">
+									<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">
+									  ${index + 1}
+									</div>
+									<h4 class="ml-3 font-medium text-neutral-700">第 ${index + 1} 天</h4>
+								  </div>
+								  <div class="p-4 space-y-4" id="day-${index + 1}-items">
+									<!-- 行程项将动态添加 -->
+								  </div>
+								`;
+
+					const itemsContainer = dayElement.querySelector(`#day-${index + 1}-items`);
+
+					// 确保我们有当天的行程项
+					if (day.items && day.items.length > 0) {
+						day.items.forEach((item, itemIndex) => {
+							const itemElement = document.createElement('div');
+							itemElement.className = 'flex border-l-2 border-primary/50 pl-4 py-1';
+
+							// 时间标记
+							const timeMarker = document.createElement('div');
+							timeMarker.className = 'mr-3 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0';
+							timeMarker.innerHTML = `<i class="fa fa-clock-o text-primary text-xs"></i>`;
+
+							// 行程内容
+							const content = document.createElement('div');
+							content.className = 'flex-1';
+							content.innerHTML = `
+									  <div class="flex justify-between items-start">
+										<h5 class="font-medium text-neutral-700">${item.name || '未命名活动'}</h5>
+										<span class="text-xs text-neutral-500">${item.time || '未知时间'}</span>
+									  </div>
+									  <p class="text-sm text-neutral-500 mt-1">${item.description || '无描述'}</p>
+									  <div class="flex items-center text-xs text-neutral-500 mt-2">
+										<span class="flex items-center mr-4"><i class="fa fa-tag text-primary mr-1"></i> ${item.category || '未知类别'}</span>
+										<span class="flex items-center"><i class="fa fa-yen text-primary mr-1"></i> ${item.price || '未知费用'}</span>
+									  </div>
+									`;
+
+							itemElement.appendChild(timeMarker);
+							itemElement.appendChild(content);
+							itemsContainer.appendChild(itemElement);
+						});
+					} else {
+						// 如果当天没有行程项，显示提示
+						itemsContainer.innerHTML = `
+									<div class="p-4 text-center">
+									  <p class="text-neutral-500 text-sm">没有找到第${index + 1}天的详细行程</p>
+									</div>
+								  `;
+					}
+
+					daysList.appendChild(dayElement);
+				});
+
+				// 显示结果
+				resultContainer.classList.remove('hidden');
+			}
+		});
+	</script>
+
+	
+
+	<script>
+		const chatToggle = document.getElementById('chatToggle');
+		const chatSidebar = document.getElementById('chatSidebar');
+		const closeChat = document.getElementById('closeChat');
+		chatToggle.addEventListener('click', () => {
+			chatSidebar.classList.remove('sidebar-hidden');
+			chatSidebar.classList.add('sidebar-visible');
+		});
+
+		function closeChatSidebar() {
+			chatSidebar.classList.remove('sidebar-visible');
+			chatSidebar.classList.add('sidebar-hidden');
+		}
+
+		closeChat.addEventListener('click', closeChatSidebar);
+
+		// 消息显示函数
+		const messagesEl = document.getElementById('messages');
+		const micBtn = document.getElementById('chatMicBtn');
+		const statusText = document.getElementById('statusText');
+		const micIcon = document.getElementById('micIcon');
+
+		function appendMessage(role, text) {
+			const msg = document.createElement('div');
+			const isUser = role === 'user';
+
+			msg.className = isUser ?
+				'chat-bubble-user p-3 max-w-[90%] ml-auto message-appear' :
+				'chat-bubble-bot p-3 max-w-[90%] message-appear';
+
+			msg.innerHTML = `
+										<div class="flex items-start ${isUser ? 'flex-row-reverse' : ''} space-x-2">
+											<div class="${isUser ? 'w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center text-primary text-xs shadow-sm' : 'w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white text-xs shadow-md avatar-float'}">
+												<i class="fa ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+											</div>
+											<div class="flex-1">
+												<p class="text-xs ${isUser ? 'text-white' : 'text-neutral-700'}">${text}</p>
+												<p class="text-[10px] text-neutral-400 mt-1">${isUser ? '你' : 'AI助手'} · ${new Date().toLocaleTimeString()}</p>
+											</div>
+										</div>
+									`;
+
+			messagesEl.appendChild(msg);
+			messagesEl.scrollTop = messagesEl.scrollHeight;
+		}
+
+		// 显示AI正在输入的动画
+		function showTypingIndicator() {
+			const typingIndicator = document.createElement('div');
+			typingIndicator.id = 'typingIndicator';
+			typingIndicator.className = 'chat-bubble-bot p-3 max-w-[90%] message-appear';
+			typingIndicator.innerHTML = `
+										<div class="flex items-start space-x-2">
+											<div class="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white text-xs shadow-md avatar-float">
+												<i class="fa fa-robot"></i>
+											</div>
+											<div>
+												<p class="text-xs text-neutral-700">
+													<span class="typing-dot"></span>
+													<span class="typing-dot"></span>
+													<span class="typing-dot"></span>
+												</p>
+											</div>
+										</div>
+									`;
+
+			messagesEl.appendChild(typingIndicator);
+			messagesEl.scrollTop = messagesEl.scrollHeight;
+		}
+
+		// 移除AI正在输入的动画
+		function removeTypingIndicator() {
+			const typingIndicator = document.getElementById('typingIndicator');
+			if (typingIndicator) {
+				typingIndicator.remove();
+			}
+		}
+
+		// 语音识别部分
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+		if (!SpeechRecognition) {
+			appendMessage('bot', '抱歉，您的浏览器不支持语音识别功能。请使用Chrome、Edge等现代浏览器。');
+			micBtn.disabled = true;
+			micBtn.classList.add('bg-neutral-300', 'cursor-not-allowed');
+			micBtn.classList.remove('bg-primary', 'hover:bg-primary/90');
+		} else {
+			const recognition = new SpeechRecognition();
+			recognition.lang = 'zh-CN';
+			recognition.interimResults = true;
+			recognition.maxAlternatives = 1;
+
+			let isListening = false;
+
+			// 语音识别结果处理
+			recognition.addEventListener('result', (e) => {
+				const transcript = Array.from(e.results)
+					.map(result => result[0])
+					.map(result => result.transcript)
+					.join('');
+
+				if (e.results[0].isFinal) {
+					appendMessage('user', transcript);
+					statusText.textContent = 'AI正在思考...';
+					micIcon.classList.remove('fa-microphone');
+					micIcon.classList.add('fa-spinner', 'fa-spin');
+					micBtn.classList.remove('mic-pulse');
+					micBtn.classList.add('bg-neutral-400');
+					micBtn.classList.remove('bg-gradient-to-br', 'from-primary', 'to-accent');
+
+					showTypingIndicator();
+					sendToAI(transcript);
+				} else {
+					// 临时结果显示
+					statusText.textContent = '识别中: ' + transcript;
+				}
+			});
+
+			// 识别开始
+			recognition.addEventListener('start', () => {
+				isListening = true;
+				micBtn.classList.remove('bg-gradient-to-br', 'from-primary', 'to-accent');
+				micBtn.classList.add('bg-danger', 'hover:bg-danger/90');
+				micIcon.classList.remove('fa-microphone');
+				micIcon.classList.add('fa-stop');
+				statusText.textContent = '正在聆听...';
+				statusText.classList.add('text-danger');
+				statusText.classList.remove('text-neutral-500');
+				micBtn.classList.remove('mic-pulse');
+			});
+
+			// 识别结束
+			recognition.addEventListener('end', () => {
+				if (isListening) {
+					recognition.start();
+				} else {
+					micBtn.classList.remove('bg-danger', 'hover:bg-danger/90');
+					micBtn.classList.add('bg-gradient-to-br', 'from-primary', 'to-accent');
+					micIcon.classList.remove('fa-stop');
+					micIcon.classList.add('fa-microphone');
+					statusText.textContent = '点击麦克风开始说话';
+					statusText.classList.remove('text-danger');
+					statusText.classList.add('text-neutral-500');
+					micBtn.classList.add('mic-pulse');
+				}
+			});
+
+			// 识别错误
+			recognition.addEventListener('error', (e) => {
+				console.error('语音识别错误:', e);
+				isListening = false;
+				micBtn.classList.remove('bg-danger', 'hover:bg-danger/90');
+				micBtn.classList.add('bg-gradient-to-br', 'from-primary', 'to-accent');
+				micIcon.classList.remove('fa-stop');
+				micIcon.classList.add('fa-microphone');
+				micBtn.classList.add('mic-pulse');
+
+				let errorMsg = '语音识别失败';
+				switch (e.error) {
+					case 'no-speech':
+						errorMsg = '没有检测到语音，请重试';
+						break;
+					case 'audio-capture':
+						errorMsg = '无法访问麦克风，请确保您已授予麦克风权限';
+						break;
+					case 'not-allowed':
+						errorMsg = '麦克风权限被拒绝';
+						break;
+				}
+
+				statusText.textContent = errorMsg;
+				appendMessage('bot', errorMsg);
+			});
+
+			// 点击按钮开始/停止识别
+			micBtn.addEventListener('click', () => {
+				if (isListening) {
+					isListening = false;
+					recognition.stop();
+				} else {
+					isListening = true;
+					recognition.start();
+				}
+			});
+
+			// 发送到AI处理（模拟逻辑）
+			async function sendToAI(question) {
+				try {
+					// 显示加载状态
+					micBtn.innerHTML = '<i class="fa fa-spinner fa-spin text-2xl"></i>'; // 旋转加载图标
+					statusText.textContent = '正在生成回答...';
+
+					// 发起DeepSeek API请求（使用URLSearchParams构造表单数据）
+					const response = await fetch("/api/DeepSeek/CallDeepSeek", {
+						method: "POST",
+						body: new URLSearchParams({
+							inputtext: question,
+
+						}),
+						headers: {
+
+							// 'Authorization': 'Bearer YOUR_TOKEN'
+						}
+					});
+
+					console.log('AI请求响应状态:', response.status);
+
+					// 检查响应状态
+					if (!response.ok) {
+						throw new Error(`请求失败，状态码: ${response.status}`);
+					}
+
+					// 解析响应内容（根据API返回格式调整，此处假设返回纯文本）
+					const aiResponse = await response.text();
+
+					// 显示回答
+					appendMessage('bot', aiResponse.trim() || '抱歉，未获取到有效回答');
+
+				} catch (err) {
+					console.error('AI请求错误:', err);
+					appendMessage('bot', '出错了，请稍后再试'); // 友好错误提示
+				} finally {
+					// 重置按钮和状态文本
+					micBtn.innerHTML = '<i class="fa fa-microphone text-2xl"></i>'; // 恢复麦克风图标
+					statusText.textContent = '点击麦克风开始说话';
+					removeTypingIndicator(); // 移除可能存在的输入状态
+				}
+			}
+
+
+		}
+	</script>
+	<script>
+		// 全局状态管理
+		const state = {
+			currentPage: 1,
+			searchKeyword: '',
+			selectedCategory: '',
+			sortBy: 'createdDate_desc'
+		};
+		// 获取日志内容文本域
+		const journalContent = document.getElementById('journal-content');
+
+		function showButtonLoading(button) {
+			const spinner = button.querySelector('.spinner');
+			const text = button.querySelector('.loading-text');
+			spinner.classList.remove('hidden');
+			text.style.opacity = '0'; // 渐隐文字
+			button.disabled = true; // 禁用按钮防止重复点击
+		}
+
+		function hideButtonLoading(button) {
+			const spinner = button.querySelector('.spinner');
+			const text = button.querySelector('.loading-text');
+			spinner.classList.add('hidden');
+			text.style.opacity = '1'; // 恢复文字
+			button.disabled = false; // 启用按钮
+		}
+
+		// AI 优化内容
+		function aiEnhanceContent() {
+			const button = event.target.closest('button'); // 获取点击的按钮
+			const content = journalContent.value.trim();
+			if (!content) return alert('请先输入日志内容');
+
+			showButtonLoading(button); // 显示按钮加载状态
+
+			fetch('/api/DeepSeek/AIEnhance', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ content, action: 'enhance' })
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						journalContent.value = data.result;
+						alert('AI 优化完成！');
+					} else {
+						alert(`错误：${data.message}`);
+					}
+				})
+				.catch(error => console.error('AI 优化失败:', error))
+				.finally(() => {
+					hideButtonLoading(button); // 隐藏加载状态
+				});
+		}
+
+		// AI 补全内容
+		function aiCompleteContent() {
+			const button = event.target.closest('button');
+			const content = journalContent.value.trim();
+			if (!content) return alert('请先输入日志开头');
+
+			showButtonLoading(button);
+
+			fetch('/api/DeepSeek/AIComplete', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ content, action: 'complete' })
+			})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						journalContent.value += '\n\n' + data.result;
+						alert('AI 补全完成！');
+					} else {
+						alert(`错误：${data.message}`);
+					}
+				})
+				.catch(error => console.error('AI 补全失败:', error))
+				.finally(() => {
+					hideButtonLoading(button);
+				});
+		}
+		// DOM 加载完成后执行
+		document.addEventListener('DOMContentLoaded', async () => {
+			// 加载日志列表
+			await loadJournals();
+
+			// 加载热门目的地
+			await loadPopularDestinations();
+
+			// 加载热门标签
+			await loadPopularTags();
+
+			// 新建日志模态框控制
+			const createJournalBtn = document.getElementById('create-journal-btn');
+			const createJournalModal = document.getElementById('create-journal-modal');
+			const closeModalBtn = document.getElementById('close-modal-btn');
+			// 获取日志内容文本域
+
+			function openModal() {
+				createJournalModal.classList.remove('invisible', 'opacity-0');
+				createJournalModal.querySelector('div').classList.remove('scale-95');
+				createJournalModal.querySelector('div').classList.add('scale-100');
+				document.body.style.overflow = 'hidden';
+			}
+
+			function closeModal() {
+				createJournalModal.classList.add('opacity-0');
+				createJournalModal.querySelector('div').classList.remove('scale-100');
+				createJournalModal.querySelector('div').classList.add('scale-95');
+
+				setTimeout(() => {
+					createJournalModal.classList.add('invisible');
+					document.body.style.overflow = '';
+				}, 300);
+			}
+
+			createJournalBtn.addEventListener('click', openModal);
+			closeModalBtn.addEventListener('click', closeModal);
+
+			// 点击模态框外部关闭
+			createJournalModal.addEventListener('click', (e) => {
+				if (e.target === createJournalModal) {
+					closeModal();
+				}
+			});
+
+			// 图片上传预览
+			const coverImage = document.getElementById('cover-image');
+			const imagePreview = document.getElementById('image-preview');
+			const previewImg = document.getElementById('preview-img');
+			const removeImage = document.getElementById('remove-image');
+
+			coverImage.addEventListener('change', (e) => {
+				const file = e.target.files[0];
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = (event) => {
+						previewImg.src = event.target.result;
+						imagePreview.classList.remove('hidden');
+					};
+					reader.readAsDataURL(file);
+				}
+			});
+
+			removeImage.addEventListener('click', () => {
+				coverImage.value = '';
+				imagePreview.classList.add('hidden');
+			});
+
+			// 添加标签功能
+			const tagInput = document.getElementById('tag-input');
+			const addTagBtn = document.getElementById('add-tag-btn');
+			const tagsContainer = document.getElementById('tags-container');
+
+			function addTag(tag) {
+				if (!tag.trim()) return;
+
+				const tagElement = document.createElement('span');
+				tagElement.className = 'px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center';
+				tagElement.innerHTML = `
+																  ${tag} <button class="ml-1 text-primary/70 hover:text-primary" onclick="this.parentElement.remove()">
+																	  <i class="fa fa-times-circle"></i>
+																  </button>
+															  `;
+
+				tagsContainer.appendChild(tagElement);
+				tagInput.value = '';
+			}
+
+			tagInput.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter') {
+					addTag(tagInput.value);
+				}
+			});
+
+			addTagBtn.addEventListener('click', () => {
+				addTag(tagInput.value);
+			});
+
+			// 搜索功能
+			const searchInput = document.getElementById('search-input');
+			const searchButton = document.getElementById('search-button');
+
+			searchButton.addEventListener('click', async () => {
+				state.searchKeyword = searchInput.value.trim();
+				state.currentPage = 1;
+				await loadJournals();
+			});
+
+			searchInput.addEventListener('keydown', async (e) => {
+				if (e.key === 'Enter') {
+					state.searchKeyword = searchInput.value.trim();
+					state.currentPage = 1;
+					await loadJournals();
+				}
+			});
+
+			// 分类筛选
+			const categoryFilter = document.getElementById('category-filter');
+
+			categoryFilter.addEventListener('change', async () => {
+				state.selectedCategory = categoryFilter.value;
+				state.currentPage = 1;
+				await loadJournals();
+			});
+
+			// 排序筛选
+			const sortFilter = document.getElementById('sort-filter');
+
+			sortFilter.addEventListener('change', async () => {
+				state.sortBy = sortFilter.value;
+				state.currentPage = 1;
+				await loadJournals();
+			});
+
+			// 视图切换
+			const gridViewBtn = document.getElementById('grid-view-btn');
+			const listViewBtn = document.getElementById('list-view-btn');
+			const journalsContainer = document.getElementById('journals-container');
+
+			gridViewBtn.addEventListener('click', () => {
+				journalsContainer.classList.remove('grid-cols-1');
+				journalsContainer.classList.add('md:grid-cols-2');
+				gridViewBtn.classList.add('btn-primary');
+				gridViewBtn.classList.remove('btn-outline');
+				listViewBtn.classList.remove('btn-primary');
+				listViewBtn.classList.add('btn-outline');
+			});
+
+			listViewBtn.addEventListener('click', () => {
+				journalsContainer.classList.remove('md:grid-cols-2');
+				journalsContainer.classList.add('grid-cols-1');
+				listViewBtn.classList.add('btn-primary');
+				listViewBtn.classList.remove('btn-outline');
+				gridViewBtn.classList.remove('btn-primary');
+				gridViewBtn.classList.add('btn-outline');
+			});
+
+			// 发布日志
+			const publishJournalBtn = document.getElementById('publish-journal-btn');
+
+			publishJournalBtn.addEventListener('click', async () => {
+				const form = document.getElementById('journal-form');
+				const formData = new FormData(form);
+
+				// 获取标签
+				const tags = Array.from(document.querySelectorAll('#tags-container span'))
+					.map(tag => tag.textContent.trim().replace('×', '').trim());
+				formData.append('Tags', JSON.stringify(tags));
+
+				try {
+					// 显示加载状态
+					publishJournalBtn.disabled = true;
+					publishJournalBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 发布中...';
+
+					const response = await fetch(`/api/Journals/PostJournal`, {
+						method: 'POST',
+						body: formData
+					});
+
+					if (response.ok) {
+						const result = await response.json();
+						alert('日志发布成功！');
+						closeModal();
+						form.reset();
+						document.getElementById('image-preview').classList.add('hidden');
+						document.getElementById('tags-container').innerHTML = '';
+						state.currentPage = 1;
+						await loadJournals();
+					} else {
+						const error = await response.text();
+						alert(`发布失败: ${error}`);
+					}
+				} catch (error) {
+					console.error('发布日志出错:', error);
+					alert('发布过程中出现错误，请稍后再试。');
+				} finally {
+					// 恢复按钮状态
+					publishJournalBtn.disabled = false;
+					publishJournalBtn.innerHTML = '发布日志';
+				}
+			});
+
+			// 滚动时导航栏样式变化
+			window.addEventListener('scroll', () => {
+				const header = document.querySelector('header');
+				if (window.scrollY > 50) {
+					header.classList.add('shadow-lg');
+					header.classList.remove('shadow-md');
+				} else {
+					header.classList.remove('shadow-lg');
+					header.classList.add('shadow-md');
+				}
+			});
+		});
+
+		// 加载日志列表
+		async function loadJournals() {
+			try {
+				// 显示加载状态
+				console.log('加载第', state.currentPage, '页数据');
+				document.getElementById('journals-container').innerHTML = `
+															<div class="col-span-full text-center py-12">
+																<div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+																<p class="mt-2 text-neutral-500">正在加载日志...</p>
+															</div>
+														`;
+
+				// 构建查询参数
+				let queryParams = `page=${state.currentPage}&pageSize=4`;
+				if (state.searchKeyword) queryParams += `&search=${encodeURIComponent(state.searchKeyword)}`;
+				if (state.selectedCategory) queryParams += `&category=${encodeURIComponent(state.selectedCategory)}`;
+				if (state.sortBy) queryParams += `&sort=${state.sortBy}`;
+
+				const response = await fetch(`/api/journals?${queryParams}`);
+				const data = await response.json(); // 后端返回的 PaginationResult 对象
+
+				// 检查数据格式是否正确（确保包含 items 和 totalPages）
+				if (!data || !Array.isArray(data.items) || !data.totalPages) {
+					throw new Error('Invalid response format from server');
+				}
+
+				// 渲染日志列表和分页控件
+				renderJournals(data.items); // 使用 items 字段
+				renderPagination(data.totalPages, state.currentPage); // 使用 totalPages 字段
+			} catch (error) {
+				console.error('加载日志出错:', error);
+				document.getElementById('journals-container').innerHTML = `
+															<div class="col-span-full text-center py-12">
+																<i class="fa fa-exclamation-triangle text-red-500 text-3xl mb-3"></i>
+																<p class="text-neutral-700">加载日志失败，请稍后再试</p>
+															</div>
+														`;
+			}
+		}
+
+		// 渲染日志列表
+		function renderJournals(journals) {
+			const journalsContainer = document.getElementById('journals-container');
+			journalsContainer.innerHTML = '';
+
+			if (journals.length === 0) {
+				journalsContainer.innerHTML = `
+													<div class="col-span-full text-center py-12">
+														<i class="fa fa-search text-neutral-400 text-3xl mb-3"></i>
+														<p class="text-neutral-700">没有找到匹配的日志</p>
+														<p class="text-neutral-500 text-sm mt-2">尝试修改搜索条件或清除筛选器</p>
+													</div>
+												`;
+				return;
+			}
+
+			journals.forEach(journal => {
+				const card = document.createElement('div');
+				card.className = 'bg-white rounded-xl overflow-hidden shadow-sm card-hover';
+
+				// 注意这里使用了JavaScript模板字符串（反引号）
+				card.innerHTML = `
+													<div class="relative h-48 overflow-hidden">
+														<img src="${journal.coverImage || 'https://picsum.photos/600/400'}" alt="${journal.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+														<div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-neutral-700">
+															${journal.category}
+														</div>
+													</div>
+													<div class="p-5">
+														<div class="flex items-center text-sm text-neutral-500 mb-3">
+															<i class="fa fa-map-marker mr-1"></i>
+															<span>${journal.destination}</span>
+															<span class="mx-2">•</span>
+															<span>${formatDate(journal.startDate)} - ${formatDate(journal.endDate)}</span>
+														</div>
+														<h3 class="font-semibold text-lg text-neutral-800 mb-2 line-clamp-2 hover:text-primary transition-colors">
+															<a href="#" class="journal-link">${journal.title}</a>
+														</h3>
+														<p class="text-neutral-600 text-sm mb-4 line-clamp-3">
+															${journal.content.substring(0, 100)}...
+														</p>
+														<div class="flex items-center justify-between">
+															<div class="flex items-center">
+																<div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+																	<i class="fa fa-heart-o"></i>
+																</div>
+																<span class="ml-2 text-sm text-neutral-600">${journal.likes}</span>
+															</div>
+															<div class="text-sm text-neutral-500">
+																${formatDate(journal.createdDate)}
+															</div>
+														</div>
+													</div>
+												`;
+
+				journalsContainer.appendChild(card);
+
+				// 添加点击事件处理
+				card.querySelector('.journal-link').addEventListener('click', function (e) {
+					e.preventDefault();
+					window.location.href = `/journals/${journal.id}/details`;
+				});
+			});
+		}
+
+		// 渲染分页控件
+		function renderPagination(totalPages, currentPage) {
+			const paginationContainer = document.getElementById('pagination-container');
+			paginationContainer.innerHTML = '';
+
+			if (totalPages <= 1) return;
+
+			const maxVisiblePages = 5;
+			let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+			let endPage = startPage + maxVisiblePages - 1;
+
+			if (endPage > totalPages) {
+				endPage = totalPages;
+				startPage = Math.max(1, endPage - maxVisiblePages + 1);
+			}
+
+			// 上一页按钮
+			if (currentPage > 1) {
+				const prevButton = document.createElement('button');
+				prevButton.className = 'px-4 py-2 rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors mr-1';
+				prevButton.innerHTML = '<i class="fa fa-chevron-left"></i>';
+				prevButton.addEventListener('click', async function () {
+					console.log('点击上一页前，state.currentPage =', state.currentPage);
+					state.currentPage--;
+					console.log('点击上一页后，state.currentPage =', state.currentPage);
+					await loadJournals();
+				});
+				paginationContainer.appendChild(prevButton);
+			}
+
+			// 第一页
+			if (startPage > 1) {
+				const firstPageButton = createPageButton(1);
+				paginationContainer.appendChild(firstPageButton);
+
+				if (startPage > 2) {
+					const ellipsis = document.createElement('span');
+					ellipsis.className = 'px-2 py-2 text-neutral-500';
+					ellipsis.textContent = '...';
+					paginationContainer.appendChild(ellipsis);
+				}
+			}
+
+			// 页码按钮
+			for (let i = startPage; i <= endPage; i++) {
+				const pageButton = createPageButton(i);
+				if (i === currentPage) {
+					pageButton.classList.remove('hover:bg-neutral-50', 'text-neutral-700');
+					pageButton.classList.add('bg-primary', 'text-white');
+				}
+				paginationContainer.appendChild(pageButton);
+			}
+
+			// 最后一页
+			if (endPage < totalPages) {
+				if (endPage < totalPages - 1) {
+					const ellipsis = document.createElement('span');
+					ellipsis.className = 'px-2 py-2 text-neutral-500';
+					ellipsis.textContent = '...';
+					paginationContainer.appendChild(ellipsis);
+				}
+
+				const lastPageButton = createPageButton(totalPages);
+				paginationContainer.appendChild(lastPageButton);
+			}
+
+			// 下一页按钮
+			if (currentPage < totalPages) {
+				const nextButton = document.createElement('button');
+				nextButton.className = 'px-4 py-2 rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors ml-1';
+				nextButton.innerHTML = '<i class="fa fa-chevron-right"></i>';
+				nextButton.addEventListener('click', async function () {
+					console.log('点击下一页前，state.currentPage =', state.currentPage);
+					state.currentPage++;
+					console.log('点击下一页后，state.currentPage =', state.currentPage);
+					await loadJournals();
+				});
+				paginationContainer.appendChild(nextButton);
+			}
+
+			function createPageButton(pageNum) {
+				const button = document.createElement('button');
+				button.className = 'w-10 h-10 rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors';
+				button.textContent = pageNum;
+				button.addEventListener('click', async function () {
+					console.log('点击页码前，state.currentPage =', state.currentPage);
+					state.currentPage = pageNum;
+					console.log('点击页码后，state.currentPage =', state.currentPage);
+					await loadJournals();
+				});
+				return button;
+			}
+		}
+
+		// 加载热门目的地
+		async function loadPopularDestinations() {
+			try {
+				const response = await fetch(`/api/Journals/destinations/popular`);
+				const destinations = await response.json();
+
+				const container = document.getElementById('popular-destinations');
+				container.innerHTML = '';
+
+				destinations.forEach(destination => {
+					const item = document.createElement('div');
+					item.className = 'flex items-center';
+					item.innerHTML = `
+																	  <img src="${destination.imageUrl || 'https://picsum.photos/60/60'}" alt="${destination.name}" class="w-14 h-14 rounded-lg object-cover">
+																	  <div class="ml-3">
+																		  <h4 class="font-medium text-neutral-800">${destination.name}</h4>
+																		  <p class="text-xs text-neutral-500">${destination.count} 篇日志</p>
+																	  </div>
+																  `;
+
+					item.addEventListener('click', () => {
+						state.searchKeyword = destination.name;
+						document.getElementById('search-input').value = destination.name;
+						state.currentPage = 1;
+						loadJournals();
+					});
+
+					container.appendChild(item);
+				});
+			} catch (error) {
+				console.error('加载热门目的地出错:', error);
+			}
+		}
+
+		// 加载热门标签
+		async function loadPopularTags() {
+			try {
+				const response = await fetch('/api/Journals/tags/popular');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const data = await response.json();
+
+				// 确保data是数组格式
+				if (!Array.isArray(data)) {
+					throw new Error('Invalid data format: expected array');
+				}
+
+				const tagsContainer = document.getElementById('popular-tags');
+				tagsContainer.innerHTML = '';
+
+				data.forEach(tag => {
+					const tagElement = document.createElement('span');
+					tagElement.className = 'inline-block bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors';
+					tagElement.textContent = tag.name || tag;
+					tagsContainer.appendChild(tagElement);
+				});
+			} catch (error) {
+				console.error('加载热门标签出错:', error);
+				// 显示错误信息给用户
+				const tagsContainer = document.getElementById('popular-tags');
+				tagsContainer.innerHTML = `
+															<div class="text-red-500 text-sm">
+																<i class="fa fa-exclamation-triangle mr-2"></i>
+																加载标签时出错，请刷新重试
+															</div>
+														`;
+			}
+		}
+
+		// 日期格式化函数
+		function formatDate(dateString) {
+			const date = new Date(dateString);
+			return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
+		}
+	</script>
+	
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			let currentPage = 1;
+			let currentSort = 'createdDate_desc';
+			let currentPageSize = 10;
+			let currentSearch = '';
+			let commentIdToDelete = null;
+
+			// 获取模态框元素
+			const commentModal = document.getElementById('commentModal');
+			const commentModalContent = document.getElementById('commentModalContent');
+			const closeCommentModalBtn = document.getElementById('closeModalBtn');
+			const cancelCommentBtn = document.getElementById('cancelBtn');
+
+			const deleteModal = document.getElementById('deleteModal');
+			const deleteModalContent = document.getElementById('deleteModalContent');
+			const closeDeleteModalBtn = document.getElementById('cancelDeleteBtn');
+
+			// 模态框动画效果
+			commentModal.addEventListener('transitionend', function () {
+				if (commentModal.classList.contains('hidden')) {
+					commentModalContent.classList.remove('scale-100', 'opacity-100');
+					commentModalContent.classList.add('scale-95', 'opacity-0');
+				}
+			});
+
+			deleteModal.addEventListener('transitionend', function () {
+				if (deleteModal.classList.contains('hidden')) {
+					deleteModalContent.classList.remove('scale-100', 'opacity-100');
+					deleteModalContent.classList.add('scale-95', 'opacity-0');
+				}
+			});
+
+			// 显示模态框时的动画
+			function showModal(modal, modalContent) {
+				modal.classList.remove('hidden');
+				setTimeout(() => {
+					modalContent.classList.remove('scale-95', 'opacity-0');
+					modalContent.classList.add('scale-100', 'opacity-100');
+				}, 10);
+			}
+
+			// 隐藏模态框时的动画
+			function hideModal(modal, modalContent) {
+				modalContent.classList.remove('scale-100', 'opacity-100');
+				modalContent.classList.add('scale-95', 'opacity-0');
+				setTimeout(() => {
+					modal.classList.add('hidden');
+				}, 300);
+			}
+
+			// 加载评论列表
+			function loadComments(page = 1, sort = currentSort, pageSize = currentPageSize, search = currentSearch) {
+				currentPage = page;
+				currentSort = sort;
+				currentPageSize = pageSize;
+				currentSearch = search;
+
+				fetch(`/api/comments?page=${page}&sort=${sort}&pageSize=${pageSize}&search=${search}`)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP错误，状态码: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(data => {
+						renderComments(data);
+						renderPagination(data);
+						updatePaginationInfo(data);
+					})
+					.catch(error => {
+						console.error('加载评论失败:', error);
+						showNotification('加载评论失败，请重试', 'error');
+					});
+			}
+
+			// 渲染评论列表
+			function renderComments(data) {
+				const commentsList = document.getElementById('commentsList');
+
+				if (!data || !Array.isArray(data.items) || data.items.length === 0) {
+					commentsList.innerHTML = `
+									<div class="col-span-full bg-white rounded-xl p-8 text-center card-shadow">
+										<div class="mb-4 text-gray-400">
+											<i class="fa fa-comment-o text-5xl"></i>
+										</div>
+										<h3 class="text-lg font-medium text-gray-700 mb-2">暂无评论</h3>
+										<p class="text-gray-500">添加第一条评论吧！</p>
+									</div>
+								`;
+					return;
+				}
+
+				commentsList.innerHTML = data.items.map(comment => `
+								<div class="bg-white rounded-xl overflow-hidden card-shadow hover-scale">
+									<div class="p-6">
+										<div class="flex items-center mb-4">
+											<img src="${comment.img || 'https://picsum.photos/id/1005/100/100'}" alt="${comment.author}" class="w-12 h-12 rounded-full object-cover">
+											<div class="ml-3">
+												<h3 class="font-medium text-gray-800">${comment.author}</h3>
+												<div class="flex text-sm text-gray-500">
+													<span>${formatDate(comment.createtime)}</span>
+												</div>
+											</div>
+											<div class="ml-auto star-rating">
+												${generateStarRating(comment.star)}
+											</div>
+										</div>
+										<h2 class="text-xl font-bold text-gray-800 mb-2">${comment.title}</h2>
+										<p class="text-gray-600 mb-4">${comment.content}</p>
+										<div class="flex justify-end space-x-2">
+											<button class="edit-comment-btn px-3 py-1 text-sm text-primary hover:text-primary/80 transition-colors" data-id="${comment.id}">
+												<i class="fa fa-edit mr-1"></i> 编辑
+											</button>
+											<button class="delete-comment-btn px-3 py-1 text-sm text-red-500 hover:text-red-600 transition-colors" data-id="${comment.id}">
+												<i class="fa fa-trash mr-1"></i> 删除
+											</button>
+										</div>
+									</div>
+								</div>
+							`).join('');
+
+				// 添加事件监听器
+				setupEventListeners();
+			}
+
+			// 设置事件监听器
+			function setupEventListeners() {
+				// 编辑按钮事件监听
+				document.querySelectorAll('.edit-comment-btn').forEach(button => {
+					button.addEventListener('click', function () {
+						const commentId = this.getAttribute('data-id');
+						console.log('编辑评论ID:', commentId);
+						loadCommentForEdit(commentId);
+					});
+				});
+
+				// 删除按钮事件监听
+				document.querySelectorAll('.delete-comment-btn').forEach(button => {
+					button.addEventListener('click', function () {
+						commentIdToDelete = this.getAttribute('data-id');
+						console.log('删除评论ID:', commentIdToDelete);
+						showModal(deleteModal, deleteModalContent);
+					});
+				});
+			}
+
+			// 渲染分页控件
+			function renderPagination(data) {
+				const paginationControls = document.getElementById('paginationControls');
+				paginationControls.innerHTML = '';
+
+				if (data.totalPages <= 1) return;
+
+				// 上一页按钮
+				const prevBtn = document.createElement('button');
+				prevBtn.className = `px-3 py-1.5 rounded-lg border border-gray-300 ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50 transition-all'}`;
+				prevBtn.innerHTML = '<i class="fa fa-chevron-left"></i>';
+				prevBtn.disabled = currentPage === 1;
+				prevBtn.addEventListener('click', () => {
+					if (currentPage > 1) {
+						loadComments(currentPage - 1);
+					}
+				});
+				paginationControls.appendChild(prevBtn);
+
+				// 页码按钮
+				const maxVisiblePages = 5;
+				let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+				let endPage = startPage + maxVisiblePages - 1;
+
+				if (endPage > data.totalPages) {
+					endPage = data.totalPages;
+					startPage = Math.max(1, endPage - maxVisiblePages + 1);
+				}
+
+				if (startPage > 1) {
+					addPageButton(1);
+					if (startPage > 2) {
+						addEllipsis();
+					}
+				}
+
+				for (let i = startPage; i <= endPage; i++) {
+					addPageButton(i);
+				}
+
+				if (endPage < data.totalPages) {
+					if (endPage < data.totalPages - 1) {
+						addEllipsis();
+					}
+					addPageButton(data.totalPages);
+				}
+
+				// 下一页按钮
+				const nextBtn = document.createElement('button');
+				nextBtn.className = `px-3 py-1.5 rounded-lg border border-gray-300 ${currentPage === data.totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50 transition-all'}`;
+				nextBtn.innerHTML = '<i class="fa fa-chevron-right"></i>';
+				nextBtn.disabled = currentPage === data.totalPages;
+				nextBtn.addEventListener('click', () => {
+					if (currentPage < data.totalPages) {
+						loadComments(currentPage + 1);
+					}
+				});
+				paginationControls.appendChild(nextBtn);
+
+				function addPageButton(pageNum) {
+					const pageBtn = document.createElement('button');
+					pageBtn.className = `px-3 py-1.5 rounded-lg ${pageNum === currentPage ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-50 transition-all'}`;
+					pageBtn.textContent = pageNum;
+					pageBtn.addEventListener('click', () => {
+						if (pageNum !== currentPage) {
+							loadComments(pageNum);
+						}
+					});
+					paginationControls.appendChild(pageBtn);
+				}
+
+				function addEllipsis() {
+					const ellipsis = document.createElement('span');
+					ellipsis.className = 'px-2 py-1.5 text-gray-500';
+					ellipsis.textContent = '...';
+					paginationControls.appendChild(ellipsis);
+				}
+			}
+
+			// 更新分页信息
+			function updatePaginationInfo(data) {
+				const startItem = (data.currentPage - 1) * data.pageSize + 1;
+				const endItem = Math.min(data.currentPage * data.pageSize, data.totalItems);
+				document.getElementById('paginationInfo').textContent = `显示 ${startItem}-${endItem} 条，共 ${data.totalItems} 条`;
+			}
+
+			// 加载评论用于编辑
+			function loadCommentForEdit(id) {
+				if (!id) {
+					showNotification('评论ID缺失', 'error');
+					return;
+				}
+
+				fetch(`/api/comments/${id}`)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP错误，状态码: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(comment => {
+						document.getElementById('commentId').value = comment.id;
+						document.getElementById('title').value = comment.title;
+						document.getElementById('author').value = comment.author;
+						document.getElementById('star').value = comment.star;
+						document.getElementById('content').value = comment.content;
+
+						if (comment.img) {
+							document.getElementById('imagePreview').src = comment.img;
+							document.getElementById('imagePreviewContainer').classList.remove('hidden');
+						} else {
+							document.getElementById('imagePreviewContainer').classList.add('hidden');
+						}
+
+						document.getElementById('modalTitle').textContent = '编辑评论';
+						showModal(commentModal, commentModalContent);
+					})
+					.catch(error => {
+						console.error('加载评论失败:', error);
+						showNotification('加载评论失败，请稍后再试', 'error');
+					});
+			}
+
+			// 添加评论
+			function addComment() {
+				document.getElementById('commentForm').reset();
+				document.getElementById('commentId').value = '';
+				document.getElementById('imagePreviewContainer').classList.add('hidden');
+				document.getElementById('modalTitle').textContent = '添加评论';
+				showModal(commentModal, commentModalContent);
+			}
+
+			// 保存评论
+			function saveComment() {
+				const formData = new FormData(document.getElementById('commentForm'));
+				const commentId = document.getElementById('commentId').value;
+
+				console.log("FormData内容：");
+				for (const [key, value] of formData.entries()) {
+					console.log(`${key}: ${value instanceof File ? "文件" : value}`);
+				}
+				if (commentId) {
+					formData.set('Id', commentId); // 显式添加ID到表单数据
+				}
+
+				const method = commentId ? 'PUT' : 'POST';
+				const url = commentId ? `/api/comments/${commentId}` : '/api/comments';
+
+				// 设置请求头，允许空文件上传
+				const requestOptions = {
+					method: method,
+					body: formData
+				};
+
+				fetch(url, requestOptions)
+					.then(response => {
+						if (response.ok) {
+							return response.json();
+						}
+
+						// 获取详细的错误信息
+						return response.text().then(text => {
+							throw new Error(`保存评论失败 (${response.status}): ${text}`);
+						});
+					})
+					.then(() => {
+						hideModal(commentModal, commentModalContent);
+						loadComments();
+						showNotification('评论保存成功', 'success');
+					})
+					.catch(error => {
+						console.error('保存评论失败:', error);
+						showNotification(error.message || '评论保存失败，请重试', 'error');
+					});
+			}
+
+			// 删除评论
+			function deleteComment() {
+				if (!commentIdToDelete) {
+					showNotification('评论ID缺失', 'error');
+					return;
+				}
+
+				fetch(`/api/comments/${commentIdToDelete}`, {
+					method: 'DELETE'
+				})
+					.then(response => {
+						if (response.ok) {
+							hideModal(deleteModal, deleteModalContent);
+							loadComments();
+							showNotification('评论已删除', 'success');
+						} else {
+							throw new Error('删除评论失败');
+						}
+					})
+					.catch(error => {
+						console.error('删除评论失败:', error);
+						hideModal(deleteModal, deleteModalContent);
+						showNotification('删除评论失败，请重试', 'error');
+					});
+			}
+
+			// 显示通知
+			function showNotification(message, type = 'info') {
+				const notificationContainer = document.getElementById('notificationContainer');
+				const notification = document.createElement('div');
+				const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+				const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+
+				notification.className = `relative bg-white rounded-lg shadow-lg overflow-hidden mb-3 transform transition-all duration-300 translate-x-full opacity-0`;
+				notification.innerHTML = `
+								<div class="flex items-center p-4">
+									<div class="flex-shrink-0 w-8 h-8 rounded-full ${bgColor} flex items-center justify-center">
+										<i class="fa ${icon} text-white"></i>
+									</div>
+									<div class="ml-3 flex-1">
+										<p class="text-sm font-medium text-gray-800">${message}</p>
+									</div>
+									<button class="ml-auto flex-shrink-0 text-gray-400 hover:text-gray-600" onclick="this.parentElement.parentElement.remove()">
+										<i class="fa fa-times"></i>
+									</button>
+								</div>
+							`;
+
+				notificationContainer.appendChild(notification);
+
+				// 显示通知
+				setTimeout(() => {
+					notification.classList.remove('translate-x-full', 'opacity-0');
+				}, 10);
+
+				// 自动关闭
+				setTimeout(() => {
+					notification.classList.add('translate-x-full', 'opacity-0');
+					setTimeout(() => {
+						notification.remove();
+					}, 300);
+				}, 3000);
+			}
+
+			// 格式化日期
+			function formatDate(dateString) {
+				const date = new Date(dateString);
+				return date.toLocaleDateString('zh-CN', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric'
+				});
+			}
+
+			// 生成星级评分HTML
+			function generateStarRating(stars) {
+				let html = '';
+				for (let i = 1; i <= 5; i++) {
+					html += `<i class="fa fa-star ${i <= stars ? 'text-yellow-400' : 'text-gray-300'}"></i>`;
+				}
+				return html;
+			}
+
+			// 设置模态框关闭事件
+			closeCommentModalBtn.addEventListener('click', () => hideModal(commentModal, commentModalContent));
+			cancelCommentBtn.addEventListener('click', () => hideModal(commentModal, commentModalContent));
+			closeDeleteModalBtn.addEventListener('click', () => hideModal(deleteModal, deleteModalContent));
+
+			// 事件监听
+			document.getElementById('addCommentBtn').addEventListener('click', addComment);
+			document.getElementById('commentForm').addEventListener('submit', (e) => {
+				e.preventDefault();
+				saveComment();
+			});
+			document.getElementById('confirmDeleteBtn').addEventListener('click', deleteComment);
+			document.getElementById('uploadBtn').addEventListener('click', () => {
+				document.getElementById('imgfile').click();
+			});
+			document.getElementById('imgfile').addEventListener('change', (e) => {
+				const file = e.target.files[0];
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						document.getElementById('imagePreview').src = e.target.result;
+						document.getElementById('imagePreviewContainer').classList.remove('hidden');
+					}
+					reader.readAsDataURL(file);
+				}
+			});
+			document.getElementById('searchInput').addEventListener('keyup', (e) => {
+				if (e.key === 'Enter') {
+					loadComments(1, currentSort, currentPageSize, e.target.value);
+				}
+			});
+			document.getElementById('sortSelect').addEventListener('change', (e) => {
+				loadComments(1, e.target.value, currentPageSize, currentSearch);
+			});
+			document.getElementById('pageSizeSelect').addEventListener('change', (e) => {
+				loadComments(1, currentSort, parseInt(e.target.value), currentSearch);
+			});
+
+			// 初始化加载评论
+			loadComments();
+		});
+	</script>
+</body>
+</html>
